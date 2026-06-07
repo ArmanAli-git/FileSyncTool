@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Sync Tool</title>
+    <link href="./css/index.css" rel="stylesheet">
+</head>
+<body>
+    <main>
+        <header class="title">
+            <h1>⚡ File Sync Tool</h1>
+        </header>
+
+        <div class="directory-select">
+            <div class="select-btn" onclick="select_A()">
+                <span class="card-icon">📁</span>
+                <span class="card-title">Directory A</span>
+                <span class="path-label" id="path-a">Not selected</span>
+            </div>
+            <div class="select-btn" onclick="select_B()">
+                <span class="card-icon">📁</span>
+                <span class="card-title">Directory B</span>
+                <span class="path-label" id="path-b">Not selected</span>
+            </div>
+        </div>
+
+        <div class="sync">
+            <button id="sync-btn" onclick="sync()">
+                <span class="sync-icon">🔄</span>
+                Sync Files
+            </button>
+            <span class="sync-status" id="sync-status">Click to sync directories</span>
+        </div>
+
+        <div class="progress-bar">
+            <div class="bar"></div>
+        </div>
+    </main>
+    
+    <script src="./js/index.js"></script>
+</body>
+</html>
