@@ -1,43 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>File Sync Tool</title>
-    <link href="./css/index.css" rel="stylesheet">
+    <link href="./index.css" rel="stylesheet">
 </head>
+
 <body>
     <main>
-        <header class="title">
+        <header id="title">
             <h1>⚡ File Sync Tool</h1>
         </header>
 
-        <div class="directory-select">
-            <div class="select-btn" onclick="select_A()">
+        <div class="card-container">
+            <div class="card-button" id="card-a" onclick="selectA()">
                 <span class="card-icon">📁</span>
-                <span class="card-title">Directory A</span>
-                <span class="path-label" id="path-a">Not selected</span>
+                <span class="card-name">Directory A</span>
+                <span class="card-path" id="path-a">Not selected</span>
             </div>
-            <div class="select-btn" onclick="select_B()">
-                <span class="card-icon">📁</span>
-                <span class="card-title">Directory B</span>
-                <span class="path-label" id="path-b">Not selected</span>
+
+            <div class="secondary-card-wrapper">
+                <div class="card-button" id="card-b" onclick="selectB()">
+                    <span class="card-icon">📁</span>
+                    <span class="card-name">Directory B</span>
+                    <span class="card-path" id="path-b">Not selected</span>
+                </div>
+                <div class="card-button" id="card-c">
+                    <span class="card-icon">☁️</span>
+                    <span class="card-name">Google Drive</span>
+                    <div class="newfolder-container">
+                        <input type="text" class="newfolder-box">
+                        <button class="newfolder-button" onclick="createFolder()">+</button>
+                    </div>
+                    <div class="selectfolder-container">
+                        <input type="checkbox" id="selectfolder-box" onchange="getFolder(this)">
+                        <label for="selectfolder-box" class="selectfolder-picker">
+                            <span class="selectfolder-name">Select a folder</span>
+                            <span class="selectfolder-arrow">▼</span>
+                        </label>
+                        <div class="selectfolder-options"></div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="sync">
-            <button id="sync-btn" onclick="sync()">
+
+        <div class="cloudtoggle-container">
+            <span class="cloudtoggle-name">Cloud</span>
+            <input type="checkbox" id="cloudtoggle-box" onchange="authenticateDrive(this)">
+            <label for="cloudtoggle-box" class="cloudtoggle-slider"></label>
+        </div>
+
+        <div class="sync-container">
+            <button class="sync-button" onclick="sync()">
                 <span class="sync-icon">🔄</span>
                 Sync Files
             </button>
             <span class="sync-status" id="sync-status">Click to sync directories</span>
         </div>
 
-        <div class="progress-bar">
-            <div class="bar"></div>
+        <div class="progressbar-container">
+            <div class="progressbar-line"></div>
         </div>
     </main>
-    
-    <script src="./js/index.js"></script>
+
+    <script src="./index.js"></script>
 </body>
+
 </html>
