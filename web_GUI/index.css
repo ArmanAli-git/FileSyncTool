@@ -1,9 +1,11 @@
+/* ==========================================================================
+   1. RESET & VARIABLES
+   ========================================================================== */
 @font-face {
   font-family: "poppins";
   src: url(./fonts/Poppins-Regular.ttf);
 }
 
-/* ====== BASE ====== */
 html {
   font-size: clamp(16px, 1vw + 8px, 22px);
 }
@@ -16,26 +18,26 @@ html {
 }
 
 :root {
-  /* ====== BACKGROUNDS (The Deep Void) ====== */
+  /* BACKGROUNDS (The Deep Void) */
   --bg-dark: 246, 55%, 10%;
   --bg-mid: 240, 28%, 14%;
   --bg-light: 224, 48%, 16%;
 
-  /* ====== ACCENTS (The Neon Purple) ====== */
+  /* ACCENTS (The Neon Purple) */
   --accent-main: 243, 100%, 69%;
   --accent-dark: 244, 61%, 58%;
   --accent-light: 243, 100%, 73%;
 
-  /* ====== TEXT (The Frost) ====== */
+  /* TEXT (The Frost) */
   --text-primary: 0, 0%, 88%;
   --text-bright: 240, 100%, 91%;
   --text-muted: 240, 16%, 60%;
 
-  /* ====== GLASS FOUNDATIONS ====== */
+  /* GLASS FOUNDATIONS */
   --glass-white: 0, 0%, 100%;
   --glass-black: 0, 0%, 0%;
 
-  /* ====== STATUS SIGNALS ====== */
+  /* STATUS SIGNALS */
   --status-success: 142, 71%, 58%;
   --status-error: 0, 91%, 71%;
 }
@@ -46,7 +48,9 @@ body {
   overflow: hidden;
 }
 
-/* ====== MAIN ====== */
+/* ==========================================================================
+   2. LAYOUT & TYPOGRAPHY
+   ========================================================================== */
 main {
   height: 100%;
   display: flex;
@@ -62,7 +66,6 @@ main {
   padding: 2.5rem;
 }
 
-/* ====== TITLE ====== */
 #title h1 {
   font-size: 2rem;
   text-align: center;
@@ -93,7 +96,9 @@ main {
   }
 }
 
-/* ====== CARDS ====== */
+/* ==========================================================================
+   3. BASE CARDS
+   ========================================================================== */
 .card-container {
   display: flex;
   justify-content: center;
@@ -123,19 +128,17 @@ main {
 }
 
 #card-a:hover,
-#card-b:hover {
-  border-color: hsla(var(--accent-main), 0.4);
-  box-shadow:
-    0 8px 32px hsla(var(--accent-main), 0.15),
-    inset 0 1px 0 hsla(var(--glass-white), 0.08);
-  transform: translateY(-3px);
-}
-
+#card-b:hover,
 #card-c:hover {
   border-color: hsla(var(--accent-main), 0.4);
   box-shadow:
     0 8px 32px hsla(var(--accent-main), 0.15),
     inset 0 1px 0 hsla(var(--glass-white), 0.08);
+}
+
+#card-a:hover,
+#card-b:hover {
+  transform: translateY(-3px);
 }
 
 #card-a:active,
@@ -147,52 +150,8 @@ main {
   transition: all 0.1s ease;
 }
 
-.secondary-card-wrapper {
-  display: grid;
-  grid-template-areas: "secondary-button";
-}
-
-#card-b,
-#card-c {
-  grid-area: "secondary-button";
-  grid-row: 1 / 2;
-  grid-column: 1 / 2;
-  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.27);
-}
-
-#card-b {
-  opacity: 100%;
-  z-index: 1;
-  transform: scale(1);
-  pointer-events: auto;
-}
-
-#card-c {
-  opacity: 0;
-  z-index: 0;
-  transform: scale(0.5);
-  pointer-events: none;
-  cursor: default;
-}
-
 .card-icon {
   font-size: 2rem;
-}
-
-@keyframes cloudBreathe {
-  0% {
-    filter: drop-shadow(0 0 2px hsla(var(--accent-main), 0.4));
-  }
-  50% {
-    filter: drop-shadow(0 0 12px hsla(var(--accent-main), 0.9));
-  }
-  100% {
-    filter: drop-shadow(0 0 2px hsla(var(--accent-main), 0.4));
-  }
-}
-
-main:has(#cloudtoggle-box:checked) #card-c .card-icon {
-  animation: cloudBreathe 3s infinite ease-in-out;
 }
 
 .card-name {
@@ -212,7 +171,72 @@ main:has(#cloudtoggle-box:checked) #card-c .card-icon {
   text-align: center;
 }
 
-/* ====== CLOUD CARD ====== */
+/* ==========================================================================
+   4. SECONDARY CARDS (LOCATION B vs CLOUD)
+   ========================================================================== */
+.secondary-card-wrapper {
+  display: grid;
+  grid-template-areas: "secondary-button";
+}
+
+#card-b,
+#card-c {
+  grid-area: "secondary-button";
+  grid-row: 1 / 2;
+  grid-column: 1 / 2;
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.27);
+}
+
+/* Default States (Cloud OFF) */
+#card-b {
+  opacity: 1;
+  z-index: 1;
+  transform: scale(1);
+}
+
+#card-c {
+  opacity: 0;
+  z-index: 0;
+  transform: scale(0.5);
+  pointer-events: none;
+}
+
+/* Cloud ON States */
+main:has(#cloudtoggle-box:checked) #card-b {
+  opacity: 0;
+  z-index: 0;
+  transform: scale(0.5);
+  pointer-events: none;
+}
+
+main:has(#cloudtoggle-box:checked) #card-c {
+  opacity: 1;
+  z-index: 1;
+  transform: scale(1);
+  pointer-events: auto;
+  /* (Wait State style overridden by JS when loading) */
+}
+
+main:has(#cloudtoggle-box:checked) #card-c .card-icon {
+  animation: cloudBreathe 3s infinite ease-in-out;
+}
+
+@keyframes cloudBreathe {
+  0% {
+    filter: drop-shadow(0 0 2px hsla(var(--accent-main), 0.4));
+  }
+  50% {
+    filter: drop-shadow(0 0 12px hsla(var(--accent-main), 0.9));
+  }
+  100% {
+    filter: drop-shadow(0 0 2px hsla(var(--accent-main), 0.4));
+  }
+}
+
+/* ==========================================================================
+   5. CLOUD FOLDER INPUTS & MENUS
+   ========================================================================== */
+/* New Folder input */
 .newfolder-container {
   display: flex;
   justify-content: center;
@@ -237,7 +261,6 @@ main:has(#cloudtoggle-box:checked) #card-c .card-icon {
   border-color: hsla(var(--accent-main));
   box-shadow: 0 0 10px hsla(var(--accent-main), 0.3);
   background: hsla(var(--glass-black), 0.3);
-  transition: all 0.4s ease;
 }
 
 .newfolder-button {
@@ -276,6 +299,7 @@ main:has(#cloudtoggle-box:checked) #card-c .card-icon {
   transition: all 0.1s ease;
 }
 
+/* Select Folder dropdown */
 .selectfolder-container {
   display: flex;
   flex-direction: column;
@@ -286,18 +310,6 @@ main:has(#cloudtoggle-box:checked) #card-c .card-icon {
   width: 0;
   height: 0;
   visibility: 0;
-}
-
-#selectfolder-box:checked ~ .selectfolder-options {
-  max-height: 200px;
-  opacity: 1;
-  border: 1px solid hsla(var(--accent-main), 0.3);
-  box-shadow: 0 12px 32px hsla(var(--glass-black), 0.6);
-}
-
-#selectfolder-box:checked ~ label .selectfolder-arrow {
-  transform: rotate(180deg);
-  transition: all 0.4s ease;
 }
 
 .selectfolder-picker {
@@ -321,8 +333,18 @@ main:has(#cloudtoggle-box:checked) #card-c .card-icon {
   background: hsla(var(--accent-main), 0.4);
 }
 
+#selectfolder-box:disabled + .selectfolder-picker {
+  pointer-events: none;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .selectfolder-arrow {
   transition: all 0.4s ease;
+}
+
+#selectfolder-box:checked ~ label .selectfolder-arrow {
+  transform: rotate(180deg);
 }
 
 .selectfolder-options {
@@ -343,6 +365,13 @@ main:has(#cloudtoggle-box:checked) #card-c .card-icon {
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.27);
 }
 
+#selectfolder-box:checked ~ .selectfolder-options {
+  max-height: 200px;
+  opacity: 1;
+  border: 1px solid hsla(var(--accent-main), 0.3);
+  box-shadow: 0 12px 32px hsla(var(--glass-black), 0.6);
+}
+
 .selectfolder-options:has(label) {
   padding: 0.2rem 0.5rem;
   font-size: 0.6rem;
@@ -361,6 +390,7 @@ main:has(#cloudtoggle-box:checked) #card-c .card-icon {
   background: hsla(var(--accent-main), 0.3);
 }
 
+/* Loading Animation */
 .loading-filler {
   display: flex;
   align-items: center;
@@ -369,7 +399,6 @@ main:has(#cloudtoggle-box:checked) #card-c .card-icon {
   gap: 0.5rem;
   cursor: pointer;
   border-radius: 6px;
-  /* font-weight: bold; */
 }
 
 .loading-filler > *:nth-child(1) {
@@ -394,13 +423,22 @@ main:has(#cloudtoggle-box:checked) #card-c .card-icon {
   }
 }
 
-/* ====== CLOUD TOGGLE ====== */
+/* ==========================================================================
+   6. CLOUD TOGGLE SWITCH
+   ========================================================================== */
 .cloudtoggle-container {
   display: flex;
   justify-content: flex-end;
   align-items: center;
   width: 40rem;
   gap: 8px;
+}
+
+.cloudtoggle-name {
+  font-size: 0.9rem;
+  color: hsl(var(--text-bright));
+  font-weight: 500;
+  letter-spacing: 0.5px;
 }
 
 #cloudtoggle-box {
@@ -424,14 +462,6 @@ main:has(#cloudtoggle-box:checked) #card-c .card-icon {
   transition: all 0.4s ease;
 }
 
-.cloudtoggle-slider:active {
-  transform: transformY(0) scale(0.97);
-  box-shadow:
-    0 2px 12px hsla(var(--glass-black), 0.3),
-    inset 0 1px 0 hsla(var(--glass-white), 0.05);
-  transition: all 0.1s ease;
-}
-
 .cloudtoggle-slider:after {
   content: "";
   position: absolute;
@@ -449,7 +479,18 @@ main:has(#cloudtoggle-box:checked) #card-c .card-icon {
   box-shadow:
     0 4px 20px hsla(var(--accent-main), 0.35),
     0 0 0 1px hsla(var(--accent-main), 0.2);
-  transition: all 0.4s ease;
+}
+
+.cloudtoggle-slider:active {
+  transform: transformY(0) scale(0.97);
+  box-shadow:
+    0 2px 12px hsla(var(--glass-black), 0.3),
+    inset 0 1px 0 hsla(var(--glass-white), 0.05);
+  transition: all 0.1s ease;
+}
+
+.cloudtoggle-slider:active:after {
+  width: 2rem;
 }
 
 #cloudtoggle-box:checked + .cloudtoggle-slider {
@@ -464,6 +505,10 @@ main:has(#cloudtoggle-box:checked) #card-c .card-icon {
     0 0 0 1px hsla(var(--accent-main), 0.2);
 }
 
+#cloudtoggle-box:checked + .cloudtoggle-slider:after {
+  transform: translateX(1.9rem);
+}
+
 #cloudtoggle-box:checked + .cloudtoggle-slider:hover {
   background: linear-gradient(
     135deg,
@@ -471,42 +516,14 @@ main:has(#cloudtoggle-box:checked) #card-c .card-icon {
     hsl(var(--accent-light))
   );
 }
-#cloudtoggle-box:checked + .cloudtoggle-slider:after {
-  transform: translateX(1.9rem);
-}
-
-.cloudtoggle-slider:active:after {
-  width: 2rem;
-}
 
 #cloudtoggle-box:checked + .cloudtoggle-slider:active:after {
   transform: translateX(1.4rem);
 }
 
-.cloudtoggle-name {
-  font-size: 0.9rem;
-  color: hsl(var(--text-bright));
-  font-weight: 500;
-  letter-spacing: 0.5px;
-}
-
-main:has(#cloudtoggle-box:checked) #card-b {
-  opacity: 0%;
-  z-index: 0;
-  transform: scale(0.5);
-  pointer-events: none;
-  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.27);
-}
-
-main:has(#cloudtoggle-box:checked) #card-c {
-  opacity: 100%;
-  z-index: 1;
-  transform: scale(1);
-  pointer-events: auto;
-  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.27);
-}
-
-/* ====== SYNC ====== */
+/* ==========================================================================
+   7. SYNC BUTTON & STATUS
+   ========================================================================== */
 .sync-container {
   display: flex;
   flex-direction: column;
@@ -556,6 +573,12 @@ main:has(#cloudtoggle-box:checked) #card-c {
   transition: all 0.1s ease;
 }
 
+.sync-button:disabled {
+  pointer-events: none;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .sync-icon {
   display: inline-block;
   font-size: 1.1rem;
@@ -584,14 +607,15 @@ main:has(#cloudtoggle-box:checked) #card-c {
 .sync-status.done {
   color: hsl(var(--status-success));
 }
-
 .sync-status.error {
-  color: hsl(var(--status-success));
+  color: hsl(var(--status-error));
 }
 
-/* ====== PROGRESS BAR ====== */
+/* ==========================================================================
+   8. PROGRESS BAR & UTILITIES
+   ========================================================================== */
 .progressbar-container {
-  opacity: 0%;
+  opacity: 0;
   border: hsla(var(--glass-white));
   border-radius: 0.3rem;
   width: 60%;
@@ -603,7 +627,7 @@ main:has(#cloudtoggle-box:checked) #card-c {
 }
 
 .progressbar-line {
-  opacity: 0%;
+  opacity: 0;
   width: 0%;
   height: 100%;
   background-color: hsl(var(--status-success));
@@ -613,8 +637,8 @@ main:has(#cloudtoggle-box:checked) #card-c {
     opacity 0.3s ease;
 }
 
-.disabled-state {
-  pointer-events: none;
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+/* .disabled-state {
+  pointer-events: none !important;
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+} */

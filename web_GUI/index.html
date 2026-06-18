@@ -16,19 +16,19 @@
       <div class="card-container">
         <div class="card-button" id="card-a" onclick="selectA()">
           <span class="card-icon">📁</span>
-          <span class="card-name">Directory A</span>
-          <span class="card-path" id="path-a">Not selected</span>
+          <span class="card-name" id="name-a">Location A</span>
+          <span class="card-path" id="path-a">Click to browse</span>
         </div>
 
         <div class="secondary-card-wrapper">
           <div class="card-button" id="card-b" onclick="selectB()">
             <span class="card-icon">📁</span>
-            <span class="card-name">Directory B</span>
-            <span class="card-path" id="path-b">Not selected</span>
+            <span class="card-name" id="name-b">Location B</span>
+            <span class="card-path" id="path-b">Click to browse</span>
           </div>
           <div class="card-button" id="card-c">
             <span class="card-icon">☁️</span>
-            <span class="card-name">Google Drive</span>
+            <span class="card-name">Cloud</span>
             <div class="newfolder-container">
               <input type="text" class="newfolder-box" />
               <button class="newfolder-button" onclick="createFolder()">
@@ -42,7 +42,7 @@
                 onchange="getFolder(this)"
               />
               <label for="selectfolder-box" class="selectfolder-picker">
-                <span class="selectfolder-name">Select a folder</span>
+                <span class="selectfolder-name">Select cloud folder</span>
                 <span class="selectfolder-arrow">▼</span>
               </label>
               <div class="selectfolder-options"></div>
@@ -52,7 +52,7 @@
       </div>
 
       <div class="cloudtoggle-container">
-        <span class="cloudtoggle-name">Cloud</span>
+        <span class="cloudtoggle-name">Drive</span>
         <input
           type="checkbox"
           id="cloudtoggle-box"
@@ -62,12 +62,12 @@
       </div>
 
       <div class="sync-container">
-        <button class="sync-button" onclick="sync()">
+        <button class="sync-button" disabled="true" onclick="sync()">
           <span class="sync-icon">🔄</span>
-          Sync Files
+          Sync
         </button>
         <span class="sync-status" id="sync-status"
-          >Click to sync directories</span
+          >Please select locations to begin.</span
         >
       </div>
 

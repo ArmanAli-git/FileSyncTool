@@ -20,6 +20,18 @@ class PythonApi:
         self.total_work = 0
         self.work_done = 1
         self.cloud_cache = []
+
+
+    def truncate_path(self, path):
+        tpath = list(path.parts)
+
+        for i in range(1, len(tpath)):
+            lenght = len("\\".join(tpath[i::]))
+            if lenght < 25:
+                if i > 2:
+                    return fr"{tpath[0]}...\{"\\".join(tpath[i::])}"
+                else:
+                    return str(path)
     
     
     def select_A(self):
@@ -27,9 +39,8 @@ class PythonApi:
         if pick:
             self.path_A = Path(pick[0])
         else:
-            pass
-
-        return str(self.path_A)
+            return None
+        return self.truncate_path(self.path_A), self.path_A.name, str(self.path_A)
 
 
     def select_B(self):
@@ -37,9 +48,8 @@ class PythonApi:
         if pick:
             self.path_B = Path(pick[0])
         else:
-            pass
-
-        return str(self.path_B)
+            return None
+        return self.truncate_path(self.path_B), self.path_B.name, str(self.path_B)
 
 
     def compare_l2l(self):
@@ -150,7 +160,6 @@ class PythonApi:
     def authenticate_ready(self):
         drive.authenticate()
         self.root_id = drive.get_or_create_root()
-        print(self.root_id)
 
 
     def create_folder(self, folder_name):
@@ -203,21 +212,22 @@ class PythonApi:
 
             if local_item.is_file():
                 parent_id = drive.get_or_create_path(str(Path(item).parent), cloud_path)
-
                 drive.upload(local_item, parent_id)
             elif local_item.is_dir():
                 drive.get_or_create_path(item, cloud_path)
 
 
     def updater(self, inter_AC):
-        item_A, item_C = inter_AC
+        inter_local, inter_cloud = inter_AC
 
-        if len(item_A) == 0:
+        if len(inter_local) == 0:
             return
 
-        for i, item in enumerate(item_A):
+        cloud_lookup = {c["path"]: c for c in inter_cloud}
+
+        for item in inter_local:
             full_A = self.path_A / item
-            full_C = item_C[i]
+            full_C = cloud_lookup[item]
 
             local_mtime = full_A.stat().st_mtime
 
@@ -226,20 +236,17 @@ class PythonApi:
 
             if full_A.is_file() and not full_C["is_dir"]:
                 if local_mtime > cloud_mtime:
-                    self.uploader(self.path_A, self.path_C, item)
+                    self.uploader(self.path_A, self.path_C, [item])
                 elif cloud_mtime > local_mtime:
-                    self.downloader(self.path_A, item_C)
+                    self.downloader(self.path_A, [full_C])
                 else:
                     self.update_bar()
             elif full_A.is_dir() and full_C["is_dir"]:
                 self.update_bar()
 
 
-
-
-
 #  <------  MAIN WINDOW  ------>
 API = PythonApi()
-WINDOW = webview.create_window("File Sync Tool", "./web_GUI/index.html", js_api=API)
+WINDOW = webview.create_window("File Sync Tool", "./web_GUI/index.html", js_api=API, width=800, height=600, resizable=False)
 API._window = WINDOW
-webview.start(debug=False)
+webview.start(debug=True)
