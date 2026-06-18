@@ -1,571 +1,620 @@
 @font-face {
-    font-family: "poppins";
-    src: url(./fonts/Poppins-Regular.ttf);
+  font-family: "poppins";
+  src: url(./fonts/Poppins-Regular.ttf);
 }
 
 /* ====== BASE ====== */
 html {
-    font-size: clamp(16px, 1vw + 8px, 22px);
+  font-size: clamp(16px, 1vw + 8px, 22px);
 }
 
 * {
-    font-family: "poppins";
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  font-family: "poppins";
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 :root {
-    /* ====== BACKGROUNDS (The Deep Void) ====== */
-    --bg-dark: 246, 55%, 10%;
-    --bg-mid: 240, 28%, 14%;
-    --bg-light: 224, 48%, 16%;
+  /* ====== BACKGROUNDS (The Deep Void) ====== */
+  --bg-dark: 246, 55%, 10%;
+  --bg-mid: 240, 28%, 14%;
+  --bg-light: 224, 48%, 16%;
 
-    /* ====== ACCENTS (The Neon Purple) ====== */
-    --accent-main: 243, 100%, 69%;
-    --accent-dark: 244, 61%, 58%;
-    --accent-light: 243, 100%, 73%;
+  /* ====== ACCENTS (The Neon Purple) ====== */
+  --accent-main: 243, 100%, 69%;
+  --accent-dark: 244, 61%, 58%;
+  --accent-light: 243, 100%, 73%;
 
-    /* ====== TEXT (The Frost) ====== */
-    --text-primary: 0, 0%, 88%;
-    --text-bright: 240, 100%, 91%;
-    --text-muted: 240, 16%, 60%;
+  /* ====== TEXT (The Frost) ====== */
+  --text-primary: 0, 0%, 88%;
+  --text-bright: 240, 100%, 91%;
+  --text-muted: 240, 16%, 60%;
 
-    /* ====== GLASS FOUNDATIONS ====== */
-    --glass-white: 0, 0%, 100%;
-    --glass-black: 0, 0%, 0%;
+  /* ====== GLASS FOUNDATIONS ====== */
+  --glass-white: 0, 0%, 100%;
+  --glass-black: 0, 0%, 0%;
 
-    /* ====== STATUS SIGNALS ====== */
-    --status-success: 142, 71%, 58%;
-    --status-error: 0, 91%, 71%;
+  /* ====== STATUS SIGNALS ====== */
+  --status-success: 142, 71%, 58%;
+  --status-error: 0, 91%, 71%;
 }
 
 body {
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
 
 /* ====== MAIN ====== */
 main {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    background: linear-gradient(135deg, hsl(var(--bg-dark)) 0%, hsl(var(--bg-mid)) 40%, hsl(var(--bg-light)) 100%);
-    padding: 2.5rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(
+    135deg,
+    hsl(var(--bg-dark)) 0%,
+    hsl(var(--bg-mid)) 40%,
+    hsl(var(--bg-light)) 100%
+  );
+  padding: 2.5rem;
 }
 
 /* ====== TITLE ====== */
 #title h1 {
-    font-size: 2rem;
-    text-align: center;
-    background: linear-gradient(135deg, hsl(var(--accent-dark)), hsl(var(--accent-main)), hsl(var(--accent-light)));
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: titleShimmer 4s ease infinite;
-    letter-spacing: 1px;
-    margin: 2rem 0;
+  font-size: 2rem;
+  text-align: center;
+  background: linear-gradient(
+    135deg,
+    hsl(var(--accent-dark)),
+    hsl(var(--accent-main)),
+    hsl(var(--accent-light))
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: titleShimmer 4s ease infinite;
+  letter-spacing: 1px;
+  margin: 2rem 0;
 }
 
 @keyframes titleShimmer {
-    0% { background-position: 0% center; }
-    50% { background-position: 100% center; }
-    100% { background-position: 0% center; }
+  0% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
+  }
+  100% {
+    background-position: 0% center;
+  }
 }
 
 /* ====== CARDS ====== */
 .card-container {
-    display: flex;
-    justify-content: center;
-    gap: 5rem;
-    width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 5rem;
+  width: 100%;
 }
 
 .card-button {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.8rem;
-    width: 18rem;
-    height: 14rem;
-    background: hsla(var(--text-primary), 0.05);
-    border: 1px solid hsla(var(--accent-main), 0.15);
-    border-radius: 16px;
-    backdrop-filter: blur(12px);
-    box-shadow:
-        0 8px 32px hsla(var(--glass-black), 0.3),
-        inset 0 1px 0 hsla(var(--glass-white), 0.05);
-    transition: all 0.4s ease;
-    padding: 1.5rem;
-    cursor: pointer;
-    user-select: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  width: 18rem;
+  height: 14rem;
+  background: hsla(var(--text-primary), 0.05);
+  border: 1px solid hsla(var(--accent-main), 0.15);
+  border-radius: 16px;
+  backdrop-filter: blur(12px);
+  box-shadow:
+    0 8px 32px hsla(var(--glass-black), 0.3),
+    inset 0 1px 0 hsla(var(--glass-white), 0.05);
+  transition: all 0.4s ease;
+  padding: 1.5rem;
+  cursor: pointer;
+  user-select: none;
 }
 
 #card-a:hover,
 #card-b:hover {
-    border-color: hsla(var(--accent-main), 0.4);
-    box-shadow:
-        0 8px 32px hsla(var(--accent-main), 0.15),
-        inset 0 1px 0 hsla(var(--glass-white), 0.08);
-    transform: translateY(-3px);
+  border-color: hsla(var(--accent-main), 0.4);
+  box-shadow:
+    0 8px 32px hsla(var(--accent-main), 0.15),
+    inset 0 1px 0 hsla(var(--glass-white), 0.08);
+  transform: translateY(-3px);
 }
 
 #card-c:hover {
-    border-color: hsla(var(--accent-main), 0.4);
-    box-shadow:
-        0 8px 32px hsla(var(--accent-main), 0.15),
-        inset 0 1px 0 hsla(var(--glass-white), 0.08);
+  border-color: hsla(var(--accent-main), 0.4);
+  box-shadow:
+    0 8px 32px hsla(var(--accent-main), 0.15),
+    inset 0 1px 0 hsla(var(--glass-white), 0.08);
 }
 
 #card-a:active,
 #card-b:active {
-    transform: translateY(0) scale(0.97);
-    box-shadow:
-        0 4px 16px hsla(var(--glass-black), 0.3),
-        inset 0 1px 0 hsla(var(--glass-white), 0.03);
-    transition: all 0.1s ease;
+  transform: translateY(0) scale(0.97);
+  box-shadow:
+    0 4px 16px hsla(var(--glass-black), 0.3),
+    inset 0 1px 0 hsla(var(--glass-white), 0.03);
+  transition: all 0.1s ease;
 }
 
 .secondary-card-wrapper {
-    display: grid;
-    grid-template-areas: "secondary-button";
+  display: grid;
+  grid-template-areas: "secondary-button";
 }
 
 #card-b,
 #card-c {
-    grid-area: "secondary-button";
-    grid-row: 1 / 2;
-    grid-column: 1 / 2;
-    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.27);}
+  grid-area: "secondary-button";
+  grid-row: 1 / 2;
+  grid-column: 1 / 2;
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.27);
+}
 
 #card-b {
-    opacity: 100%;
-    z-index: 1;
-    transform: scale(1);
-    pointer-events: auto;
+  opacity: 100%;
+  z-index: 1;
+  transform: scale(1);
+  pointer-events: auto;
 }
 
 #card-c {
-    opacity: 0;
-    z-index: 0;    
-    transform: scale(0.5);
-    pointer-events: none;
-    cursor: default;
+  opacity: 0;
+  z-index: 0;
+  transform: scale(0.5);
+  pointer-events: none;
+  cursor: default;
 }
 
 .card-icon {
-    font-size: 2rem;
+  font-size: 2rem;
 }
 
 @keyframes cloudBreathe {
-    0% { filter: drop-shadow(0 0 2px hsla(var(--accent-main), 0.4)); }
-    50% { filter: drop-shadow(0 0 12px hsla(var(--accent-main), 0.9)); }
-    100% { filter: drop-shadow(0 0 2px hsla(var(--accent-main), 0.4)); }
+  0% {
+    filter: drop-shadow(0 0 2px hsla(var(--accent-main), 0.4));
+  }
+  50% {
+    filter: drop-shadow(0 0 12px hsla(var(--accent-main), 0.9));
+  }
+  100% {
+    filter: drop-shadow(0 0 2px hsla(var(--accent-main), 0.4));
+  }
 }
 
 main:has(#cloudtoggle-box:checked) #card-c .card-icon {
-    animation: cloudBreathe 3s infinite ease-in-out;
+  animation: cloudBreathe 3s infinite ease-in-out;
 }
 
 .card-name {
-    font-size: 0.9rem;
-    color: hsl(var(--text-bright));
-    font-weight: 500;
-    letter-spacing: 0.5px;
+  font-size: 0.9rem;
+  color: hsl(var(--text-bright));
+  font-weight: 500;
+  letter-spacing: 0.5px;
 }
 
 .card-path {
-    font-size: 0.6rem;
-    color: hsla(var(--text-muted));
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    text-align: center;
+  font-size: 0.6rem;
+  color: hsla(var(--text-muted));
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
 }
 
 /* ====== CLOUD CARD ====== */
 .newfolder-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    gap: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  gap: 8px;
 }
 
 .newfolder-box {
-    background-color: hsla(var(--glass-black), 0.4);
-    color: hsl(var(--text-bright));
-    padding: 0 0.5rem;
-    border: 1px solid hsla(var(--accent-main), 0.15);
-    border-radius: 6px;
-    height: 1.8rem;
-    width: 60%;
-    outline: none;
-    transition: all 0.4s ease;
+  background-color: hsla(var(--glass-black), 0.4);
+  color: hsl(var(--text-bright));
+  padding: 0 0.5rem;
+  border: 1px solid hsla(var(--accent-main), 0.15);
+  border-radius: 6px;
+  height: 1.8rem;
+  width: 60%;
+  outline: none;
+  transition: all 0.4s ease;
 }
 
 .newfolder-box:focus {
-    border-color: hsla(var(--accent-main));
-    box-shadow: 0 0 10px hsla(var(--accent-main), 0.3);
-    background: hsla(var(--glass-black), 0.3);
-    transition: all 0.4s ease;
+  border-color: hsla(var(--accent-main));
+  box-shadow: 0 0 10px hsla(var(--accent-main), 0.3);
+  background: hsla(var(--glass-black), 0.3);
+  transition: all 0.4s ease;
 }
 
 .newfolder-button {
-    height: 1.7rem;
-    width: 1.7rem;
-    background: linear-gradient(135deg, hsl(var(--accent-dark)), hsl(var(--accent-main)));
-    color: hsla(var(--glass-white));
-    border-radius: 6px;
-    border: none;
-    font-size: 0.9rem;
-    cursor: pointer;
-    box-shadow:
-        0 4px 20px hsla(var(--accent-main), 0.35),
-        0 0 0 1px hsla(var(--accent-main), 0.2);
-    transition: all 0.35s ease;
+  height: 1.7rem;
+  width: 1.7rem;
+  background: linear-gradient(
+    135deg,
+    hsl(var(--accent-dark)),
+    hsl(var(--accent-main))
+  );
+  color: hsla(var(--glass-white));
+  border-radius: 6px;
+  border: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow:
+    0 4px 20px hsla(var(--accent-main), 0.35),
+    0 0 0 1px hsla(var(--accent-main), 0.2);
+  transition: all 0.35s ease;
 }
 
 .newfolder-button:hover {
-    background: linear-gradient(135deg, hsl(var(--accent-main)), hsl(var(--accent-light)));
-    box-shadow:
-        0 6px 28px hsla(var(--accent-main), 0.5),
-        0 0 0 1px hsla(var(--accent-main), 0.4);
+  background: linear-gradient(
+    135deg,
+    hsl(var(--accent-main)),
+    hsl(var(--accent-light))
+  );
+  box-shadow:
+    0 6px 28px hsla(var(--accent-main), 0.5),
+    0 0 0 1px hsla(var(--accent-main), 0.4);
 }
 
 .newfolder-button:active {
-    transform: translateY(0) scale(0.97);
-    box-shadow:
-        0 2px 12px hsla(var(--accent-main), 0.3);
-    transition: all 0.1s ease;
+  transform: translateY(0) scale(0.97);
+  box-shadow: 0 2px 12px hsla(var(--accent-main), 0.3);
+  transition: all 0.1s ease;
 }
 
 .selectfolder-container {
-    display: flex;
-    flex-direction: column;
-    position: relative;
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
 #selectfolder-box {
-    width: 0;
-    height: 0;
-    visibility: 0;
+  width: 0;
+  height: 0;
+  visibility: 0;
 }
 
 #selectfolder-box:checked ~ .selectfolder-options {
-    max-height: 200px;
-    opacity: 1;
-    border: 1px solid hsla(var(--accent-main), 0.3);
-    box-shadow: 0 12px 32px hsla(var(--glass-black), 0.6);
+  max-height: 200px;
+  opacity: 1;
+  border: 1px solid hsla(var(--accent-main), 0.3);
+  box-shadow: 0 12px 32px hsla(var(--glass-black), 0.6);
 }
 
 #selectfolder-box:checked ~ label .selectfolder-arrow {
-    transform: rotate(180deg);
-    transition: all 0.4s ease;
+  transform: rotate(180deg);
+  transition: all 0.4s ease;
 }
 
 .selectfolder-picker {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 11rem;
-    height: 1.6rem;
-    font-size: 0.6rem;
-    border-radius: 6px;
-    color: hsla(var(--glass-white));
-    padding: 0 0.5rem;
-    background: hsla(var(--accent-main), 0.30);
-    border: 1px solid hsla(var(--accent-light), 0.15);
-    cursor: pointer;
-    transition: all 0.4s ease;
-    z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 11rem;
+  height: 1.6rem;
+  font-size: 0.6rem;
+  border-radius: 6px;
+  color: hsla(var(--glass-white));
+  padding: 0 0.5rem;
+  background: hsla(var(--accent-main), 0.3);
+  border: 1px solid hsla(var(--accent-light), 0.15);
+  cursor: pointer;
+  transition: all 0.4s ease;
+  z-index: 2;
 }
 
 .selectfolder-picker:hover {
-    background: hsla(var(--accent-main), 0.4);
+  background: hsla(var(--accent-main), 0.4);
 }
 
 .selectfolder-arrow {
-    transition: all 0.4s ease;
+  transition: all 0.4s ease;
 }
 
 .selectfolder-options {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 1.6rem;
-    width: 11rem;
-    font-size: 0.6rem;
-    border-radius: 6px;
-    color: hsla(var(--glass-white));
-    background: hsla(var(--accent-main), 0.15);
-    overflow-y: hidden;
-    z-index: 1;
-    opacity: 0;
-    max-height: 0px;
-    border: 1px solid transparent;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.27);
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 1.6rem;
+  width: 11rem;
+  font-size: 0.6rem;
+  border-radius: 6px;
+  color: hsla(var(--glass-white));
+  background: hsla(var(--accent-main), 0.15);
+  overflow-y: hidden;
+  z-index: 1;
+  opacity: 0;
+  max-height: 0px;
+  border: 1px solid transparent;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.27);
 }
 
 .selectfolder-options:has(label) {
-    padding: 0.2rem 0.5rem;
-    font-size: 0.6rem;
-    color: hsla(var(--text-muted));
+  padding: 0.2rem 0.5rem;
+  font-size: 0.6rem;
+  color: hsla(var(--text-muted));
 }
 
 .selectfolder-options ul {
-    display: flex;
-    align-items: center;
-    padding: 0.2rem 0.5rem;
-    cursor: pointer;
-    border-radius: 6px;
+  display: flex;
+  align-items: center;
+  padding: 0.2rem 0.5rem;
+  cursor: pointer;
+  border-radius: 6px;
 }
 
 .selectfolder-options ul:hover {
-    background: hsla(var(--accent-main), 0.3);
+  background: hsla(var(--accent-main), 0.3);
 }
 
 .loading-filler {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.2rem 0.5rem;
-    gap: 0.5rem;
-    cursor: pointer;
-    border-radius: 6px;
-    /* font-weight: bold; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2rem 0.5rem;
+  gap: 0.5rem;
+  cursor: pointer;
+  border-radius: 6px;
+  /* font-weight: bold; */
 }
 
 .loading-filler > *:nth-child(1) {
-    animation: loading 1s infinite 0s
+  animation: loading 1s infinite 0s;
 }
 .loading-filler > *:nth-child(2) {
-    animation: loading 1s infinite 0.2s
+  animation: loading 1s infinite 0.2s;
 }
 .loading-filler > *:nth-child(3) {
-    animation: loading 1s infinite 0.4s
+  animation: loading 1s infinite 0.4s;
 }
-
 
 @keyframes loading {
-    0% {
-        transform: translateY(-0.1rem);
-    } 50% {
-        transform: translateY(0.1rem);
-    } 100% {
-        transform: translateY(-0.1rem);
-
-    }
+  0% {
+    transform: translateY(-0.1rem);
+  }
+  50% {
+    transform: translateY(0.1rem);
+  }
+  100% {
+    transform: translateY(-0.1rem);
+  }
 }
-
 
 /* ====== CLOUD TOGGLE ====== */
 .cloudtoggle-container {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    width: 40rem;
-    gap: 8px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 40rem;
+  gap: 8px;
 }
 
 #cloudtoggle-box {
-    width: 0;
-    height: 0;
-    visibility: 0;
+  width: 0;
+  height: 0;
+  visibility: 0;
 }
 
 .cloudtoggle-slider {
-    position: relative;
-    width: 4rem;
-    height: 2rem;
-    background: hsla(var(--glass-white), 0.05);
-    border: 1px solid hsla(var(--accent-main), 0.15);
-    border-radius: 0.5rem;
-    cursor: pointer;
-    backdrop-filter: blur(12px);
-    box-shadow:
-        0 8px 32px hsla(var(--glass-black), 0.3),
-        inset 0 1px 0 hsla(var(--glass-white), 0.05);
-    transition: all 0.4s ease;
+  position: relative;
+  width: 4rem;
+  height: 2rem;
+  background: hsla(var(--glass-white), 0.05);
+  border: 1px solid hsla(var(--accent-main), 0.15);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  box-shadow:
+    0 8px 32px hsla(var(--glass-black), 0.3),
+    inset 0 1px 0 hsla(var(--glass-white), 0.05);
+  transition: all 0.4s ease;
 }
 
 .cloudtoggle-slider:active {
-    transform: transformY(0) scale(0.97);
-    box-shadow:
-        0 2px 12px hsla(var(--glass-black), 0.3),
-        inset 0 1px 0 hsla(var(--glass-white), 0.05);
-    transition: all 0.1s ease;
+  transform: transformY(0) scale(0.97);
+  box-shadow:
+    0 2px 12px hsla(var(--glass-black), 0.3),
+    inset 0 1px 0 hsla(var(--glass-white), 0.05);
+  transition: all 0.1s ease;
 }
 
 .cloudtoggle-slider:after {
-    content: "";
-    position: absolute;
-    top: 0.17rem;
-    left: 0.2rem;
-    height: 1.6rem;
-    width: 1.6rem;
-    background-color: hsla(var(--glass-white), 0.4);
-    border-radius: 0.4rem;
-    transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+  content: "";
+  position: absolute;
+  top: 0.17rem;
+  left: 0.2rem;
+  height: 1.6rem;
+  width: 1.6rem;
+  background-color: hsla(var(--glass-white), 0.4);
+  border-radius: 0.4rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .cloudtoggle-slider:hover {
-    border-color: hsla(var(--accent-main), 0.4);
-    box-shadow:
+  border-color: hsla(var(--accent-main), 0.4);
+  box-shadow:
     0 4px 20px hsla(var(--accent-main), 0.35),
     0 0 0 1px hsla(var(--accent-main), 0.2);
-    transition: all 0.4s ease;
+  transition: all 0.4s ease;
 }
 
 #cloudtoggle-box:checked + .cloudtoggle-slider {
-    background: linear-gradient(135deg, hsl(var(--accent-dark)), hsl(var(--accent-main)));
-    border-color: hsla(var(--accent-main), 0.5);
-    box-shadow:
+  background: linear-gradient(
+    135deg,
+    hsl(var(--accent-dark)),
+    hsl(var(--accent-main))
+  );
+  border-color: hsla(var(--accent-main), 0.5);
+  box-shadow:
     0 4px 20px hsla(var(--accent-main), 0.35),
     0 0 0 1px hsla(var(--accent-main), 0.2);
 }
 
 #cloudtoggle-box:checked + .cloudtoggle-slider:hover {
-    background: linear-gradient(135deg, hsl(var(--accent-main)), hsl(var(--accent-light)));
+  background: linear-gradient(
+    135deg,
+    hsl(var(--accent-main)),
+    hsl(var(--accent-light))
+  );
 }
 #cloudtoggle-box:checked + .cloudtoggle-slider:after {
-    transform: translateX(1.9rem);
+  transform: translateX(1.9rem);
 }
 
 .cloudtoggle-slider:active:after {
-    width: 2rem;
+  width: 2rem;
 }
 
 #cloudtoggle-box:checked + .cloudtoggle-slider:active:after {
-    transform: translateX(1.4rem);
+  transform: translateX(1.4rem);
 }
 
 .cloudtoggle-name {
-    font-size: 0.9rem;
-    color: hsl(var(--text-bright));
-    font-weight: 500;
-    letter-spacing: 0.5px;
+  font-size: 0.9rem;
+  color: hsl(var(--text-bright));
+  font-weight: 500;
+  letter-spacing: 0.5px;
 }
 
 main:has(#cloudtoggle-box:checked) #card-b {
-    opacity: 0%;
-    z-index: 0;
-    transform: scale(0.5);
-    pointer-events: none;
-    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.27);
+  opacity: 0%;
+  z-index: 0;
+  transform: scale(0.5);
+  pointer-events: none;
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.27);
 }
 
 main:has(#cloudtoggle-box:checked) #card-c {
-    opacity: 100%;
-    z-index: 1;
-    transform: scale(1);
-    pointer-events: auto;
-    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.27);
+  opacity: 100%;
+  z-index: 1;
+  transform: scale(1);
+  pointer-events: auto;
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.27);
 }
 
 /* ====== SYNC ====== */
 .sync-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
 }
 
 .sync-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.6rem;
-    padding: 1rem 2.5rem;
-    background: linear-gradient(135deg, hsl(var(--accent-dark)), hsl(var(--accent-main)));
-    color: hsla(var(--glass-white));
-    border-radius: 14px;
-    border: none;
-    font-size: 0.9rem;
-    cursor: pointer;
-    box-shadow:
-        0 4px 20px hsla(var(--accent-main), 0.35),
-        0 0 0 1px hsla(var(--accent-main), 0.2);
-    transition: all 0.35s ease;
-    position: relative;
-    overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 1rem 2.5rem;
+  background: linear-gradient(
+    135deg,
+    hsl(var(--accent-dark)),
+    hsl(var(--accent-main))
+  );
+  color: hsla(var(--glass-white));
+  border-radius: 14px;
+  border: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow:
+    0 4px 20px hsla(var(--accent-main), 0.35),
+    0 0 0 1px hsla(var(--accent-main), 0.2);
+  transition: all 0.35s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .sync-button:hover {
-    background: linear-gradient(135deg, hsl(var(--accent-main)), hsl(var(--accent-light)));
-    box-shadow:
-        0 6px 28px hsla(var(--accent-main), 0.5),
-        0 0 0 1px hsla(var(--accent-main), 0.4);
-    transform: translateY(-2px);
+  background: linear-gradient(
+    135deg,
+    hsl(var(--accent-main)),
+    hsl(var(--accent-light))
+  );
+  box-shadow:
+    0 6px 28px hsla(var(--accent-main), 0.5),
+    0 0 0 1px hsla(var(--accent-main), 0.4);
+  transform: translateY(-2px);
 }
 
 .sync-button:active {
-    transform: translateY(0) scale(0.97);
-    box-shadow:
-        0 2px 12px hsla(var(--accent-main), 0.3);
-    transition: all 0.1s ease;
+  transform: translateY(0) scale(0.97);
+  box-shadow: 0 2px 12px hsla(var(--accent-main), 0.3);
+  transition: all 0.1s ease;
 }
 
 .sync-icon {
-    display: inline-block;
-    font-size: 1.1rem;
-    transition: transform 0.3s ease;
+  display: inline-block;
+  font-size: 1.1rem;
+  transition: transform 0.3s ease;
 }
 
 .sync-button.syncing .sync-icon {
-    animation: spin 0.8s linear infinite;
+  animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .sync-status {
-    font-size: 0.7rem;
-    color: hsl(var(--text-muted));
-    transition: all 0.3s ease;
+  font-size: 0.7rem;
+  color: hsl(var(--text-muted));
+  transition: all 0.3s ease;
 }
 
 .sync-status.done {
-    color: hsl(var(--status-success));
+  color: hsl(var(--status-success));
 }
 
 .sync-status.error {
-    color: hsl(var(--status-success));
+  color: hsl(var(--status-success));
 }
-
 
 /* ====== PROGRESS BAR ====== */
 .progressbar-container {
-    opacity: 0%;
-    border: hsla(var(--glass-white));
-    border-radius: 0.3rem;
-    width: 60%;
-    max-width: 28rem;
-    height: 0.6rem;
-    background-color: hsla(var(--glass-white));
-    overflow: hidden;
-    transition: opacity 0.3s ease;
+  opacity: 0%;
+  border: hsla(var(--glass-white));
+  border-radius: 0.3rem;
+  width: 60%;
+  max-width: 28rem;
+  height: 0.6rem;
+  background-color: hsla(var(--glass-white));
+  overflow: hidden;
+  transition: opacity 0.3s ease;
 }
 
 .progressbar-line {
-    opacity: 0%;
-    width: 0%;
-    height: 100%;
-    background-color: hsl(var(--status-success));
-    border-radius: 0.3rem;
-    transition: width 0.1s linear, opacity 0.3s ease;
+  opacity: 0%;
+  width: 0%;
+  height: 100%;
+  background-color: hsl(var(--status-success));
+  border-radius: 0.3rem;
+  transition:
+    width 0.1s linear,
+    opacity 0.3s ease;
 }
 
 .disabled-state {
   pointer-events: none;
-  opacity: 0.5;        
-  cursor: not-allowed; 
+  opacity: 0.5;
+  cursor: not-allowed;
 }

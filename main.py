@@ -1,12 +1,12 @@
 import shutil
 from pathlib import Path
-
 import webview
-
 import Cloud
+from datetime import datetime
 
 
 drive = Cloud.Engine()
+
 
 #  <------  FUNCTIONS  ------>
 class PythonApi:
@@ -15,9 +15,11 @@ class PythonApi:
     def __init__(self):
         self.path_A = "Path not found"
         self.path_B = "Path not found"
+        self.path_C = None
+        self.root_id = ""
         self.total_work = 0
         self.work_done = 1
-        self.root_id = ""
+        self.cloud_cache = []
     
     
     def select_A(self):
@@ -40,7 +42,7 @@ class PythonApi:
         return str(self.path_B)
 
 
-    def compare_dir(self):
+    def compare_l2l(self):
         items_A = {item for item in self.path_A.rglob("*")}
         items_B = {item for item in self.path_B.rglob("*")}
 
@@ -54,19 +56,53 @@ class PythonApi:
         return missing_in_A, missing_in_B, inter_AB
 
 
-    def sync(self):
-        missing_in_A, missing_in_B, inter_AB = self.compare_dir()
+    def compare_l2c(self):
+        items_A = {item for item in self.path_A.rglob("*")}
 
-        self.total_work = len(missing_in_A) + len(missing_in_B) + len(inter_AB)
+        rel_items_A = {str(item.relative_to(self.path_A)).replace("\\", "/") for item in items_A}
+        rel_items_C = {item["path"] for item in self.cloud_cache}
 
-        self._window.evaluate_js("progressBar('show')")
+        missing_in_A = rel_items_C - rel_items_A
+        missing_in_C = rel_items_A - rel_items_C
+        inter_local = rel_items_A & rel_items_C
 
-        self.copy(self.path_B, self.path_A, missing_in_A)
-        self.copy(self.path_A, self.path_B, missing_in_B)
-        self.update(inter_AB)
+        missing_in_A = [item for item in self.cloud_cache if item["path"] in missing_in_A]
+        inter_cloud = [item for item in self.cloud_cache if item["path"] in inter_local]
 
-        self.work_done = 1
-        self._window.evaluate_js("progressBar('hide')")
+        return missing_in_A, missing_in_C, (inter_local, inter_cloud)
+
+
+    def sync(self, cloud, cloud_folder):
+        if cloud == True:
+            self.cache(cloud_folder)
+            
+            missing_in_A, missing_in_C, inter_AC = self.compare_l2c()
+
+            self.total_work = len(missing_in_A) + len(missing_in_C) + len(inter_AC)
+
+            self._window.evaluate_js("progressBar('show')")
+
+            self.downloader(self.path_A, missing_in_A)
+            self.uploader(self.path_A, self.path_C, missing_in_C)
+            self.updater(inter_AC)
+
+            self.work_done = 1
+            self._window.evaluate_js("progressBar('hide')")
+
+
+        elif cloud == False:
+            missing_in_A, missing_in_B, inter_AB = self.compare_l2l()
+
+            self.total_work = len(missing_in_A) + len(missing_in_B) + len(inter_AB)
+
+            self._window.evaluate_js("progressBar('show')")
+
+            self.copy(self.path_B, self.path_A, missing_in_A)
+            self.copy(self.path_A, self.path_B, missing_in_B)
+            self.update(inter_AB)
+
+            self.work_done = 1
+            self._window.evaluate_js("progressBar('hide')")
 
 
     def copy(self, src_path, dst_path, items):
@@ -104,8 +140,8 @@ class PythonApi:
             elif item_A.is_dir() and item_B.is_dir():
                 self.update_bar()
 
-    def update_bar(self):
 
+    def update_bar(self):
         self._window.evaluate_js(f"updateProgress(({self.work_done}/{self.total_work}) * 100)")
         self.work_done += 1
         
@@ -122,11 +158,85 @@ class PythonApi:
         
         
     def scan_root(self):
-        return drive.scan_root()    
-    
-    def scan_target_dir(self):
-        drive.scan_target_directiry()
-        
+        return drive.scan_root()   
+
+
+    def lock_target_folder(self, folder_id):
+        drive.lock_target_folder(folder_id) 
+        self.path_C = folder_id
+
+
+    def scan_target_dir(self, cloud_folder):
+        drive.scan_target_directory(cloud_folder)
+
+
+    def cache(self, target_folder):
+        for item in drive.scan_target_directory(target_folder):
+            item_meta = {"id": item["id"], "name":item["name"], "path":item["path"], "is_dir":item["is_dir"], "modified":item["modified"]}
+            self.cloud_cache.append(item_meta)
+
+
+    def downloader(self, local_path, items_info):
+        if len(items_info) == 0:
+            return
+
+        for item in items_info:
+            self.update_bar()
+
+            local_item = local_path / item["path"]
+
+            if not item["is_dir"]:
+                local_item.parent.mkdir(parents=True, exist_ok=True)
+                drive.download(item["id"], local_item)
+            else:
+                local_item.mkdir(parents=True, exist_ok=True)
+
+
+    def uploader(self, local_path, cloud_path, items):
+        if len(items) == 0:
+            return
+
+        for item in items:
+            self.update_bar()
+
+            local_item = local_path / item
+
+            if local_item.is_file():
+                parent_id = drive.get_or_create_path(str(Path(item).parent), cloud_path)
+
+                drive.upload(local_item, parent_id)
+            elif local_item.is_dir():
+                drive.get_or_create_path(item, cloud_path)
+
+
+    def updater(self, inter_AC):
+        item_A, item_C = inter_AC
+
+        if len(item_A) == 0:
+            return
+
+        for i, item in enumerate(item_A):
+            full_A = self.path_A / item
+            full_C = item_C[i]
+
+            local_mtime = full_A.stat().st_mtime
+
+            full_C_mtime_str = full_C["modified"].replace("Z", "+00:00")
+            cloud_mtime = datetime.fromisoformat(full_C_mtime_str).timestamp()
+
+            if full_A.is_file() and not full_C["is_dir"]:
+                if local_mtime > cloud_mtime:
+                    self.uploader(self.path_A, self.path_C, item)
+                elif cloud_mtime > local_mtime:
+                    self.downloader(self.path_A, item_C)
+                else:
+                    self.update_bar()
+            elif full_A.is_dir() and full_C["is_dir"]:
+                self.update_bar()
+
+
+
+
 
 #  <------  MAIN WINDOW  ------>
 API = PythonApi()
