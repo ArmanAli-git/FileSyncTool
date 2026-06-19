@@ -39,13 +39,14 @@
               <input
                 type="checkbox"
                 id="selectfolder-box"
+                placeholder="New folder"
                 onchange="getFolder(this)"
               />
               <label for="selectfolder-box" class="selectfolder-picker">
-                <span class="selectfolder-name">Select cloud folder</span>
+                <span class="selectfolder-name">Choose a folder</span>
                 <span class="selectfolder-arrow">▼</span>
               </label>
-              <div class="selectfolder-options"></div>
+              <ul class="selectfolder-options"></ul>
             </div>
           </div>
         </div>
@@ -63,7 +64,6 @@
 
       <div class="sync-container">
         <button class="sync-button" disabled="true" onclick="sync()">
-          <span class="sync-icon">🔄</span>
           Sync
         </button>
         <span class="sync-status" id="sync-status"
@@ -72,7 +72,20 @@
       </div>
 
       <div class="progressbar-container">
-        <div class="progressbar-line"></div>
+        <div class="progressbar-lines">
+          <span class="progressbar-line"></span>
+          <span class="progressbar-line"></span>
+          <span class="progressbar-line"></span>
+          <span class="progressbar-line"></span>
+          <span class="progressbar-line"></span>
+          <span class="progressbar-line"></span>
+          <span class="progressbar-line"></span>
+          <span class="progressbar-line"></span>
+          <span class="progressbar-line"></span>
+          <span class="progressbar-line"></span>
+          <span class="progressbar-line"></span>
+          <span class="progressbar-line"></span>
+        </div>
       </div>
     </main>
 

@@ -247,6 +247,6 @@ class PythonApi:
 
 #  <------  MAIN WINDOW  ------>
 API = PythonApi()
-WINDOW = webview.create_window("File Sync Tool", "./web_GUI/index.html", js_api=API, width=800, height=600, resizable=False)
+WINDOW = webview.create_window("File Sync Tool", "http://localhost:5500/web_GUI", js_api=API, width=800, height=600, resizable=True)
 API._window = WINDOW
 webview.start(debug=True)

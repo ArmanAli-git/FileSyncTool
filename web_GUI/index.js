@@ -30,38 +30,33 @@ let cardC = document.querySelector("#card-c");
 
 function authenticateDrive(checkbox) {
   if (checkbox.checked) {
-    cardC.style.opacity = "0.6";
-    cardC.style.pointerEvents = "none";
-    cloudToggleSlider.style.opacity = "0.6";
+    cardC.classList.add("disabled-state");
+    cloudToggleSlider.classList.add("disabled-state");
     checkbox.disabled = true;
 
     pywebview.api
       .authenticate_ready()
       .then(function (result) {
-        cardC.style.opacity = "";
-        cardC.style.pointerEvents = "";
-        cloudToggleSlider.style.opacity = "";
+        cardC.classList.remove("disabled-state");
+        cloudToggleSlider.classList.remove("disabled-state");
         checkbox.disabled = false;
         cloudToggleName.style.color = "hsl(142, 71%, 58%)";
       })
       .catch(function (error) {
-        cardC.style.opacity = "";
-        cardC.style.pointerEvents = "";
+        cardC.classList.remove("disabled-state");
         checkbox.checked = false;
         checkbox.disabled = false;
-        cloudToggleSlider.style.opacity = "";
+        cloudToggleSlider.classList.remove("disabled-state");
         cloudToggleName.style.color = "hsl(0, 91%, 71%)";
       });
   } else {
     cloudToggleName.style.color = "hsl(240, 100%, 91%)";
-    cardC.style.opacity = "";
-    cardC.style.pointerEvents = "";
+    cardC.classList.remove("disabled-state");
   }
 }
 
-let inputValue = document.querySelector(".newfolder-box").value.trim();
-
 function createFolder() {
+  let inputValue = document.querySelector(".newfolder-box").value.trim();
   if (inputValue !== "") {
     pywebview.api.create_folder(inputValue).then(function (folderId) {
       if (folderId) {
@@ -78,9 +73,9 @@ let selectFolderOptions = document.querySelector(".selectfolder-options");
 function loadingFoldersAnimation(show) {
   const loadingHTML = `
   <div class="loading-filler">
-  <span>.</span>
-  <span>.</span>
-  <span>.</span>
+    <span>.</span>
+    <span>.</span>
+    <span>.</span>
   </div>`;
 
   let loadingFillerAnimation = document.querySelector(".loading-filler");
@@ -94,11 +89,13 @@ function loadingFoldersAnimation(show) {
   }
 }
 
+let selectFolderPicker = document.querySelector(".selectfolder-picker");
 selectFolderBox.disabled = false;
 
 async function getFolder(checkbox) {
   if (checkbox.checked) {
     selectFolderBox.disabled = true;
+    selectFolderPicker.classList.add("active");
     selectFolderOptions.innerHTML = "";
 
     loadingFoldersAnimation(true);
@@ -106,7 +103,7 @@ async function getFolder(checkbox) {
     let folders = await pywebview.api.scan_root();
 
     folders.forEach((folder) => {
-      let option = document.createElement("ul");
+      let option = document.createElement("li");
 
       option.innerText = folder.name;
       option.dataset.id = folder.id;
@@ -123,6 +120,8 @@ async function getFolder(checkbox) {
       selectFolderOptions.appendChild(emptyFiller);
     }
     selectFolderBox.disabled = false;
+  } else {
+    selectFolderPicker.classList.remove("active");
   }
 }
 
@@ -139,28 +138,59 @@ function selectFolder(name, id) {
 
 let syncBtn = document.querySelector(".sync-button");
 let syncSts = document.querySelector(".sync-status");
+let cloudToggleBox = document.querySelector("#cloudtoggle-box");
+let allCardButton = document.querySelectorAll(".card-button");
+let cloudToggleContainer = document.querySelector(".cloudtoggle-container");
 
-function syncStatus(state) {
+function syncState(state) {
   if (state === "syncing") {
     syncBtn.disabled = true;
+    cloudToggleBox.disabled = true;
+    cloudToggleContainer.classList.add("disabled-state");
+    if (cloudToggleBox.checked) {
+      document.querySelector("#card-a").classList.add("disabled-state");
+      document.querySelector("#card-c").classList.add("disabled-state");
+    } else {
+      document.querySelector("#card-a").classList.add("disabled-state");
+      document.querySelector("#card-b").classList.add("disabled-state");
+    }
+
     syncBtn.classList.add("syncing");
     syncBtn.textContent = "Syncing ...";
     syncSts.textContent = "Sync in progress, please wait ...";
   } else if (state === "success") {
     syncBtn.disabled = false;
+    cloudToggleBox.disabled = false;
+    cloudToggleContainer.classList.remove("disabled-state");
+    allCardButton.forEach((card) => card.classList.remove("disabled-state"));
+
     syncBtn.classList.remove("syncing");
     syncBtn.textContent = "Synced!";
+    setTimeout(() => {
+      syncBtn.textContent = "Synced";
+    }, 1000);
+    setTimeout(() => {
+      syncBtn.textContent = "Synce";
+    }, 2000);
+    setTimeout(() => {
+      syncBtn.textContent = "Sync";
+    }, 3000);
     syncSts.textContent = "All files are up to date.";
     syncSts.classList.add("done");
   } else if (state === "fail") {
     syncBtn.disabled = false;
+    cloudToggleBox.disabled = false;
+    cloudToggleContainer.classList.remove("disabled-state");
+    allCardButton.forEach((card) => card.classList.remove("disabled-state"));
+
     syncBtn.classList.remove("syncing");
     syncBtn.textContent = "Retry Sync";
     syncSts.classList.add("error");
     syncSts.textContent = "Sync failed. Please check your connection.";
   }
-  syncSts.classList.remove("done");
-  syncSts.classList.remove("error");
+
+  if (state !== "success") syncSts.classList.remove("done");
+  if (state !== "fail") syncSts.classList.remove("error");
 }
 
 function syncReady() {
@@ -168,26 +198,26 @@ function syncReady() {
     syncBtn.textContent = "Sync Now";
     syncSts.textContent = "Ready to sync.";
     syncBtn.disabled = false;
-  } else if ((pathA || pathB) && (pathA || pathC)) {
+  } else if (pathA || pathB || pathC) {
     syncSts.textContent = "Waiting for second location ...";
   }
 }
 
 function sync() {
-  syncStatus("syncing");
-  let cloudBtn = document.querySelector("#cloudtoggle-box").checked;
+  syncState("syncing");
+  let cloudBtnCheck = document.querySelector("#cloudtoggle-box").checked;
   pywebview.api
-    .sync(cloudBtn, pathC)
+    .sync(cloudBtnCheck, pathC)
     .then(function () {
-      syncStatus("success");
+      syncState("success");
     })
     .catch(function (error) {
-      syncStatus("fail");
+      syncState("fail");
     });
 }
 
 function updateProgress(work_done) {
-  let progressBarLine = document.querySelector(".progressbar-line");
+  let progressBarLine = document.querySelector(".progressbar-lines");
   progressBarLine.style.width = work_done + "%";
 }
 
@@ -197,13 +227,10 @@ function progressBar(visibilty) {
 
   if (visibilty === "show") {
     progressBar.style.opacity = "100%";
-    progressBarLine.style.opacity = "100%";
   } else if (visibilty === "hide") {
-    progressBar.style.opacity = "0%";
-    progressBarLine.style.opacity = "0%";
-
     setTimeout(function () {
+      progressBar.style.opacity = "0%";
       progressBarLine.style.width = "0%";
-    }, 500);
+    }, 300);
   }
 }

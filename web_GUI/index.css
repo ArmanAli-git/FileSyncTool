@@ -102,7 +102,7 @@ main {
 .card-container {
   display: flex;
   justify-content: center;
-  gap: 5rem;
+  gap: 3rem;
   width: 100%;
 }
 
@@ -111,17 +111,15 @@ main {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   gap: 0.8rem;
-  width: 18rem;
-  height: 14rem;
-  background: hsla(var(--text-primary), 0.05);
-  border: 1px solid hsla(var(--accent-main), 0.15);
+  width: 16rem;
+  height: 13rem;
+  background: hsla(var(--accent-main), 0.09);
+  border: 1px solid hsla(var(--accent-main), 0.1);
   border-radius: 16px;
   backdrop-filter: blur(12px);
-  box-shadow:
-    0 8px 32px hsla(var(--glass-black), 0.3),
-    inset 0 1px 0 hsla(var(--glass-white), 0.05);
-  transition: all 0.4s ease;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.27);
   padding: 1.5rem;
   cursor: pointer;
   user-select: none;
@@ -241,65 +239,59 @@ main:has(#cloudtoggle-box:checked) #card-c .card-icon {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  gap: 8px;
+  position: relative;
+}
+
+.newfolder-container::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 1.7rem;
+  height: 1px;
+  width: 0;
+  background-color: hsla(var(--accent-main), 0.5);
+  transition: all 0.2s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 .newfolder-box {
-  background-color: hsla(var(--glass-black), 0.4);
-  color: hsl(var(--text-bright));
+  background-color: transparent;
+  color: hsl(var(--accent-main));
   padding: 0 0.5rem;
-  border: 1px solid hsla(var(--accent-main), 0.15);
-  border-radius: 6px;
+  border: none;
+  border-bottom: 1px solid hsla(var(--accent-main), 0.2);
   height: 1.8rem;
-  width: 60%;
+  width: 7rem;
   outline: none;
   transition: all 0.4s ease;
 }
 
-.newfolder-box:focus {
-  border-color: hsla(var(--accent-main));
-  box-shadow: 0 0 10px hsla(var(--accent-main), 0.3);
-  background: hsla(var(--glass-black), 0.3);
+main:has(.newfolder-box:focus) .newfolder-container::after {
+  width: 7rem;
+  transition: all 0.2s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 .newfolder-button {
   height: 1.7rem;
   width: 1.7rem;
-  background: linear-gradient(
-    135deg,
-    hsl(var(--accent-dark)),
-    hsl(var(--accent-main))
-  );
-  color: hsla(var(--glass-white));
+  background-color: transparent;
+  color: hsla(var(--accent-main), 0.5);
   border-radius: 6px;
   border: none;
-  font-size: 0.9rem;
+  font-size: 1.2rem;
   cursor: pointer;
-  box-shadow:
-    0 4px 20px hsla(var(--accent-main), 0.35),
-    0 0 0 1px hsla(var(--accent-main), 0.2);
   transition: all 0.35s ease;
 }
 
 .newfolder-button:hover {
-  background: linear-gradient(
-    135deg,
-    hsl(var(--accent-main)),
-    hsl(var(--accent-light))
-  );
-  box-shadow:
-    0 6px 28px hsla(var(--accent-main), 0.5),
-    0 0 0 1px hsla(var(--accent-main), 0.4);
+  background: hsla(var(--glass-white), 0.04);
+  color: hsla(var(--accent-main), 0.8);
 }
 
 .newfolder-button:active {
   transform: translateY(0) scale(0.97);
-  box-shadow: 0 2px 12px hsla(var(--accent-main), 0.3);
   transition: all 0.1s ease;
 }
 
-/* Select Folder dropdown */
 .selectfolder-container {
   display: flex;
   flex-direction: column;
@@ -316,35 +308,29 @@ main:has(#cloudtoggle-box:checked) #card-c .card-icon {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 11rem;
+  width: 9rem;
   height: 1.6rem;
   font-size: 0.6rem;
   border-radius: 6px;
-  color: hsla(var(--glass-white));
+  color: hsla(var(--text-muted));
   padding: 0 0.5rem;
-  background: hsla(var(--accent-main), 0.3);
-  border: 1px solid hsla(var(--accent-light), 0.15);
+  border: 1px solid transparent;
   cursor: pointer;
   transition: all 0.4s ease;
   z-index: 2;
 }
 
-.selectfolder-picker:hover {
-  background: hsla(var(--accent-main), 0.4);
-}
-
-#selectfolder-box:disabled + .selectfolder-picker {
-  pointer-events: none;
-  opacity: 0.6;
-  cursor: not-allowed;
+.selectfolder-picker:hover,
+.selectfolder-picker.active {
+  background: hsla(var(--glass-white), 0.04);
 }
 
 .selectfolder-arrow {
   transition: all 0.4s ease;
 }
 
-#selectfolder-box:checked ~ label .selectfolder-arrow {
-  transform: rotate(180deg);
+main:has(#selectfolder-box:checked) .selectfolder-arrow {
+  transform: rotateX(180deg);
 }
 
 .selectfolder-options {
@@ -352,41 +338,53 @@ main:has(#cloudtoggle-box:checked) #card-c .card-icon {
   flex-direction: column;
   position: absolute;
   top: 1.6rem;
-  width: 11rem;
+  width: 9rem;
+  max-height: 0;
+  overflow-y: hidden;
   font-size: 0.6rem;
   border-radius: 6px;
-  color: hsla(var(--glass-white));
-  background: hsla(var(--accent-main), 0.15);
-  overflow-y: hidden;
+  color: hsla(var(--text-muted));
+  background: transparent;
   z-index: 1;
-  opacity: 0;
+  /* opacity: 0; */
   max-height: 0px;
   border: 1px solid transparent;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.27);
 }
 
-#selectfolder-box:checked ~ .selectfolder-options {
-  max-height: 200px;
-  opacity: 1;
+.selectfolder-options::-webkit-scrollbar {
+  width: 0;
+}
+
+main:has(#selectfolder-box:checked) .selectfolder-options {
+  max-height: 4.8rem;
+  overflow-y: scroll;
+  background: hsla(var(--accent-main), 0.15);
   border: 1px solid hsla(var(--accent-main), 0.3);
-  box-shadow: 0 12px 32px hsla(var(--glass-black), 0.6);
+  box-shadow: 0 12px 20px hsla(var(--glass-black), 0.6);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.27);
 }
 
 .selectfolder-options:has(label) {
-  padding: 0.2rem 0.5rem;
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+  height: 1.6rem;
+  padding: 0 0.5rem;
   font-size: 0.6rem;
   color: hsla(var(--text-muted));
 }
 
-.selectfolder-options ul {
+.selectfolder-options li {
   display: flex;
   align-items: center;
-  padding: 0.2rem 0.5rem;
+  flex-shrink: 0;
+  height: 1.6rem;
+  padding: 0 0.5rem;
   cursor: pointer;
-  border-radius: 6px;
 }
 
-.selectfolder-options ul:hover {
+.selectfolder-options li:hover {
   background: hsla(var(--accent-main), 0.3);
 }
 
@@ -451,18 +449,18 @@ main:has(#cloudtoggle-box:checked) #card-c .card-icon {
   position: relative;
   width: 4rem;
   height: 2rem;
-  background: hsla(var(--glass-white), 0.05);
+  z-index: 2;
+  background: hsla(var(--glass-black), 0.2);
   border: 1px solid hsla(var(--accent-main), 0.15);
   border-radius: 0.5rem;
   cursor: pointer;
-  backdrop-filter: blur(12px);
   box-shadow:
-    0 8px 32px hsla(var(--glass-black), 0.3),
-    inset 0 1px 0 hsla(var(--glass-white), 0.05);
+    inset 0 2px 5px hsla(var(--glass-black), 0.3),
+    inset 0 -2px 5px hsla(var(--glass-black), 0.3);
   transition: all 0.4s ease;
 }
 
-.cloudtoggle-slider:after {
+.cloudtoggle-slider::after {
   content: "";
   position: absolute;
   top: 0.17rem;
@@ -489,7 +487,7 @@ main:has(#cloudtoggle-box:checked) #card-c .card-icon {
   transition: all 0.1s ease;
 }
 
-.cloudtoggle-slider:active:after {
+.cloudtoggle-slider:active::after {
   width: 2rem;
 }
 
@@ -505,7 +503,7 @@ main:has(#cloudtoggle-box:checked) #card-c .card-icon {
     0 0 0 1px hsla(var(--accent-main), 0.2);
 }
 
-#cloudtoggle-box:checked + .cloudtoggle-slider:after {
+#cloudtoggle-box:checked + .cloudtoggle-slider::after {
   transform: translateX(1.9rem);
 }
 
@@ -517,7 +515,7 @@ main:has(#cloudtoggle-box:checked) #card-c .card-icon {
   );
 }
 
-#cloudtoggle-box:checked + .cloudtoggle-slider:active:after {
+#cloudtoggle-box:checked + .cloudtoggle-slider:active::after {
   transform: translateX(1.4rem);
 }
 
@@ -535,8 +533,8 @@ main:has(#cloudtoggle-box:checked) #card-c .card-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.6rem;
-  padding: 1rem 2.5rem;
+  width: 9rem;
+  height: 4rem;
   background: linear-gradient(
     135deg,
     hsl(var(--accent-dark)),
@@ -555,6 +553,26 @@ main:has(#cloudtoggle-box:checked) #card-c .card-icon {
   overflow: hidden;
 }
 
+.sync-button:not(:disabled) {
+  animation: readyPulse 2.5s infinite;
+}
+
+@keyframes readyPulse {
+  0% {
+    box-shadow: 0 0 20px hsla(var(--accent-main), 0.35);
+  }
+  50% {
+    box-shadow: 0 0 30px hsla(var(--accent-main), 0.6);
+  }
+  100% {
+    box-shadow: 0 0 20px hsla(var(--accent-main), 0.35);
+  }
+}
+
+.sync-button.syncing {
+  animation: none; /* Stop pulsing while syncing */
+}
+
 .sync-button:hover {
   background: linear-gradient(
     135deg,
@@ -571,12 +589,6 @@ main:has(#cloudtoggle-box:checked) #card-c .card-icon {
   transform: translateY(0) scale(0.97);
   box-shadow: 0 2px 12px hsla(var(--accent-main), 0.3);
   transition: all 0.1s ease;
-}
-
-.sync-button:disabled {
-  pointer-events: none;
-  cursor: not-allowed;
-  opacity: 0.6;
 }
 
 .sync-icon {
@@ -618,27 +630,65 @@ main:has(#cloudtoggle-box:checked) #card-c .card-icon {
   opacity: 0;
   border: hsla(var(--glass-white));
   border-radius: 0.3rem;
-  width: 60%;
+  width: 25rem;
   max-width: 28rem;
-  height: 0.6rem;
-  background-color: hsla(var(--glass-white));
+  height: 0.8rem;
+  background-color: hsla(var(--glass-black), 0.1);
+  box-shadow:
+    inset 0 2px 10px hsla(var(--glass-black), 0.3),
+    inset 0 -2px 10px hsla(var(--glass-black), 0.3);
   overflow: hidden;
   transition: opacity 0.3s ease;
 }
 
-.progressbar-line {
-  opacity: 0;
+.progressbar-lines {
+  display: flex;
+  opacity: 1;
   width: 0%;
+  overflow: hidden;
   height: 100%;
-  background-color: hsl(var(--status-success));
+  gap: 1.4rem;
+  background: hsl(var(--status-success));
+  background: linear-gradient(0deg, hsla(142, 71%, 35%), hsla(142, 71%, 65%));
   border-radius: 0.3rem;
   transition:
-    width 0.1s linear,
+    width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     opacity 0.3s ease;
+  /* animation: progressSheen 10s linear infinite; */
 }
 
-/* .disabled-state {
+@keyframes progressSheen {
+  0% {
+    /* background-position: 100% 0; */
+    width: 0;
+  }
+  100% {
+    /* background-position: -100% 0; */
+    width: 100%;
+  }
+}
+
+.progressbar-line {
+  flex-shrink: 0;
+  height: 1.8rem;
+  width: 0.8rem;
+  background: linear-gradient(
+    315deg,
+    hsla(142, 71%, 70%, 0.3),
+    hsla(142, 71%, 100%, 0.3)
+  );
+  transform: rotate(45deg) translateY(-0.7rem);
+}
+
+.disabled-state,
+.card-button:disabled,
+.sync-button:disabled,
+#selectfolder-box:disabled + .selectfolder-picker {
   pointer-events: none !important;
-  opacity: 0.5 !important;
+  opacity: 0.8 !important;
   cursor: not-allowed !important;
-} */
+  box-shadow:
+    inset 10px 10px 10px hsla(var(--glass-black), 0.1),
+    inset -10px -10px 10px hsla(var(--glass-white), 0.01);
+  filter: grayscale(0.3);
+}
