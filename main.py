@@ -152,7 +152,7 @@ class PythonApi:
 
 
     def update_bar(self):
-        self._window.evaluate_js(f"updateProgress(({self.work_done}/{self.total_work}) * 100)")
+        self._window.evaluate_js(f"updateProgressBar(({self.work_done}/{self.total_work}) * 100)")
         self.work_done += 1
         
         
@@ -247,6 +247,6 @@ class PythonApi:
 
 #  <------  MAIN WINDOW  ------>
 API = PythonApi()
-WINDOW = webview.create_window("File Sync Tool", "http://localhost:5500/web_GUI", js_api=API, width=800, height=600, resizable=True)
+WINDOW = webview.create_window("File Sync Tool", "http://127.0.0.1:5500/web_GUI/index.html", js_api=API, width=800, height=600, resizable=True)
 API._window = WINDOW
 webview.start(debug=True)

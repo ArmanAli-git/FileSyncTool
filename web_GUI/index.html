@@ -14,21 +14,21 @@
       </header>
 
       <div class="card-container">
-        <div class="card-button" id="card-a" onclick="selectA()">
+        <div class="card-button" id="card-a" onclick="selectLocations('a')">
           <span class="card-icon">📁</span>
           <span class="card-name" id="name-a">Location A</span>
           <span class="card-path" id="path-a">Click to browse</span>
         </div>
 
         <div class="secondary-card-wrapper">
-          <div class="card-button" id="card-b" onclick="selectB()">
+          <div class="card-button" id="card-b" onclick="selectLocations('b')">
             <span class="card-icon">📁</span>
             <span class="card-name" id="name-b">Location B</span>
             <span class="card-path" id="path-b">Click to browse</span>
           </div>
           <div class="card-button" id="card-c">
             <span class="card-icon">☁️</span>
-            <span class="card-name">Cloud</span>
+            <span class="card-name">Drive</span>
             <div class="newfolder-container">
               <input type="text" class="newfolder-box" />
               <button class="newfolder-button" onclick="createFolder()">
@@ -42,24 +42,35 @@
                 placeholder="New folder"
                 onchange="getFolder(this)"
               />
-              <label for="selectfolder-box" class="selectfolder-picker">
+              <label for="selectfolder-box" class="selectfolder-menu">
                 <span class="selectfolder-name">Choose a folder</span>
                 <span class="selectfolder-arrow">▼</span>
               </label>
-              <ul class="selectfolder-options"></ul>
+              <div class="selectfolder-list">
+                <div class="loading-folder">
+                  <span>•</span>
+                  <span>•</span>
+                  <span>•</span>
+                </div>
+                <ul class="selectfolder-options"></ul>
+                <span class="empty-folder">Nothing here</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       <div class="cloudtoggle-container">
-        <span class="cloudtoggle-name">Drive</span>
+        <span class="cloudtoggle-name">Cloud</span>
         <input
           type="checkbox"
           id="cloudtoggle-box"
           onchange="authenticateDrive(this)"
         />
-        <label for="cloudtoggle-box" class="cloudtoggle-slider"></label>
+        <label for="cloudtoggle-box" class="cloudtoggle-groove">
+          <span class="cloudtoggle-slider-outline"> </span>
+          <span class="cloudtoggle-slider"></span>
+        </label>
       </div>
 
       <div class="sync-container">

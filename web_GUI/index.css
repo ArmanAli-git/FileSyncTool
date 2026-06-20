@@ -117,21 +117,17 @@ main {
   height: 13rem;
   background: hsla(var(--accent-main), 0.09);
   border: 1px solid hsla(var(--accent-main), 0.1);
-  border-radius: 16px;
-  backdrop-filter: blur(12px);
+  border-radius: 2rem;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.27);
   padding: 1.5rem;
   cursor: pointer;
   user-select: none;
 }
 
-#card-a:hover,
-#card-b:hover,
-#card-c:hover {
+.card-button:hover {
   border-color: hsla(var(--accent-main), 0.4);
-  box-shadow:
-    0 8px 32px hsla(var(--accent-main), 0.15),
-    inset 0 1px 0 hsla(var(--glass-white), 0.08);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.27);
+  box-shadow: 0 8px 32px hsla(var(--accent-main), 0.15);
 }
 
 #card-a:hover,
@@ -142,10 +138,8 @@ main {
 #card-a:active,
 #card-b:active {
   transform: translateY(0) scale(0.97);
-  box-shadow:
-    0 4px 16px hsla(var(--glass-black), 0.3),
-    inset 0 1px 0 hsla(var(--glass-white), 0.03);
-  transition: all 0.1s ease;
+  box-shadow: 0 4px 16px hsla(var(--glass-black), 0.3);
+  transition: all 0.1s ease-out;
 }
 
 .card-icon {
@@ -153,14 +147,14 @@ main {
 }
 
 .card-name {
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: hsl(var(--text-bright));
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.5px;
 }
 
 .card-path {
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   color: hsla(var(--text-muted));
   max-width: 100%;
   overflow: hidden;
@@ -197,6 +191,7 @@ main {
   z-index: 0;
   transform: scale(0.5);
   pointer-events: none;
+  cursor: default;
 }
 
 /* Cloud ON States */
@@ -240,6 +235,8 @@ main:has(#cloudtoggle-box:checked) #card-c .card-icon {
   justify-content: center;
   align-items: center;
   position: relative;
+  border-radius: 0.4rem;
+  background: hsla(var(--accent-light), 0.05);
 }
 
 .newfolder-container::after {
@@ -250,40 +247,38 @@ main:has(#cloudtoggle-box:checked) #card-c .card-icon {
   height: 1px;
   width: 0;
   background-color: hsla(var(--accent-main), 0.5);
-  transition: all 0.2s cubic-bezier(0.19, 1, 0.22, 1);
-}
-
-.newfolder-box {
-  background-color: transparent;
-  color: hsl(var(--accent-main));
-  padding: 0 0.5rem;
-  border: none;
-  border-bottom: 1px solid hsla(var(--accent-main), 0.2);
-  height: 1.8rem;
-  width: 7rem;
-  outline: none;
-  transition: all 0.4s ease;
+  transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 main:has(.newfolder-box:focus) .newfolder-container::after {
   width: 7rem;
-  transition: all 0.2s cubic-bezier(0.19, 1, 0.22, 1);
+  transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.newfolder-box {
+  background-color: transparent;
+  color: hsla(var(--accent-main), 0.7);
+  padding: 0 0.5rem;
+  border: none;
+  height: 1.6rem;
+  width: 7.4rem;
+  outline: none;
 }
 
 .newfolder-button {
-  height: 1.7rem;
-  width: 1.7rem;
+  height: 1.6rem;
+  width: 1.6rem;
   background-color: transparent;
   color: hsla(var(--accent-main), 0.5);
-  border-radius: 6px;
+  border-radius: 0.4rem;
   border: none;
-  font-size: 1.2rem;
+  font-size: 1rem;
   cursor: pointer;
   transition: all 0.35s ease;
 }
 
 .newfolder-button:hover {
-  background: hsla(var(--glass-white), 0.04);
+  background: hsla(var(--glass-white), 0.05);
   color: hsla(var(--accent-main), 0.8);
 }
 
@@ -304,25 +299,24 @@ main:has(.newfolder-box:focus) .newfolder-container::after {
   visibility: 0;
 }
 
-.selectfolder-picker {
+.selectfolder-menu {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 9rem;
   height: 1.6rem;
-  font-size: 0.6rem;
-  border-radius: 6px;
+  font-size: 0.7rem;
+  border-radius: 0.4rem;
+  border: 1px dashed hsla(var(--accent-main), 0.2);
   color: hsla(var(--text-muted));
-  padding: 0 0.5rem;
-  border: 1px solid transparent;
+  padding: 0 0.7rem;
   cursor: pointer;
   transition: all 0.4s ease;
-  z-index: 2;
 }
 
-.selectfolder-picker:hover,
-.selectfolder-picker.active {
-  background: hsla(var(--glass-white), 0.04);
+.selectfolder-menu:hover,
+main:has(#selectfolder-box:checked) .selectfolder-menu {
+  background: hsla(var(--glass-white), 0.05);
 }
 
 .selectfolder-arrow {
@@ -333,7 +327,7 @@ main:has(#selectfolder-box:checked) .selectfolder-arrow {
   transform: rotateX(180deg);
 }
 
-.selectfolder-options {
+.selectfolder-list {
   display: flex;
   flex-direction: column;
   position: absolute;
@@ -341,72 +335,55 @@ main:has(#selectfolder-box:checked) .selectfolder-arrow {
   width: 9rem;
   max-height: 0;
   overflow-y: hidden;
-  font-size: 0.6rem;
-  border-radius: 6px;
+  font-size: 0.7rem;
+  border-radius: 8px;
   color: hsla(var(--text-muted));
   background: transparent;
-  z-index: 1;
-  /* opacity: 0; */
-  max-height: 0px;
+  z-index: 3;
   border: 1px solid transparent;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.27);
 }
 
-.selectfolder-options::-webkit-scrollbar {
-  width: 0;
-}
-
-main:has(#selectfolder-box:checked) .selectfolder-options {
+main:has(#selectfolder-box:checked) .selectfolder-list {
   max-height: 4.8rem;
   overflow-y: scroll;
-  background: hsla(var(--accent-main), 0.15);
-  border: 1px solid hsla(var(--accent-main), 0.3);
+  background: hsla(var(--accent-main), 0.05);
+  border: 1px solid hsla(var(--accent-main), 0.2);
+  backdrop-filter: blur(5px);
   box-shadow: 0 12px 20px hsla(var(--glass-black), 0.6);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.27);
 }
 
-.selectfolder-options:has(label) {
-  display: flex;
-  justify-content: center;
-  flex-shrink: 0;
-  height: 1.6rem;
-  padding: 0 0.5rem;
-  font-size: 0.6rem;
-  color: hsla(var(--text-muted));
-}
-
-.selectfolder-options li {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  height: 1.6rem;
-  padding: 0 0.5rem;
-  cursor: pointer;
-}
-
-.selectfolder-options li:hover {
-  background: hsla(var(--accent-main), 0.3);
+main:has(#selectfolder-box:checked) .selectfolder-list::-webkit-scrollbar {
+  width: 0;
 }
 
 /* Loading Animation */
-.loading-filler {
+.loading-folder {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.2rem 0.5rem;
+  height: 0;
+  opacity: 0;
   gap: 0.5rem;
-  cursor: pointer;
-  border-radius: 6px;
+  font-size: 0.6rem;
+  transition: all 0.3s ease;
 }
 
-.loading-filler > *:nth-child(1) {
+.loading-folder.show {
+  height: 1.6rem;
+  opacity: 1;
+  transition: all 0.3s ease;
+}
+
+.loading-folder > *:nth-child(1) {
   animation: loading 1s infinite 0s;
 }
-.loading-filler > *:nth-child(2) {
-  animation: loading 1s infinite 0.2s;
+.loading-folder > *:nth-child(2) {
+  animation: loading 1s infinite 0.25s;
 }
-.loading-filler > *:nth-child(3) {
-  animation: loading 1s infinite 0.4s;
+.loading-folder > *:nth-child(3) {
+  animation: loading 1s infinite 0.5s;
 }
 
 @keyframes loading {
@@ -421,22 +398,64 @@ main:has(#selectfolder-box:checked) .selectfolder-options {
   }
 }
 
+.selectfolder-options {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.selectfolder-options li {
+  display: flex;
+  align-items: center;
+  list-style-type: none;
+  width: 100%;
+  height: 1.6rem;
+  padding: 0 0.5rem;
+  opacity: 0;
+}
+
+.selectfolder-options li:hover {
+  background: hsla(var(--accent-main), 0.3);
+}
+
+.empty-folder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  width: 100%;
+  padding: 0 0.5rem;
+  color: hsla(var(--text-muted), 0.5);
+  height: 0;
+  opacity: 0;
+  overflow-y: hidden;
+}
+
+.empty-folder.show {
+  height: 1.6rem;
+  opacity: 1;
+  transition: all 0.3s ease;
+}
+
 /* ==========================================================================
-   6. CLOUD TOGGLE SWITCH
-   ========================================================================== */
+6. CLOUD TOGGLE SWITCH
+========================================================================== */
 .cloudtoggle-container {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  width: 40rem;
-  gap: 8px;
+  width: 35rem;
+  gap: 0.5rem;
 }
 
 .cloudtoggle-name {
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: hsl(var(--text-bright));
-  font-weight: 500;
+  font-weight: 700;
   letter-spacing: 0.5px;
+  transition: color 0.3s ease-in-out;
 }
 
 #cloudtoggle-box {
@@ -445,78 +464,69 @@ main:has(#selectfolder-box:checked) .selectfolder-options {
   visibility: 0;
 }
 
-.cloudtoggle-slider {
-  position: relative;
+.cloudtoggle-groove {
+  display: flex;
+  align-items: center;
   width: 4rem;
   height: 2rem;
-  z-index: 2;
+  position: relative;
   background: hsla(var(--glass-black), 0.2);
   border: 1px solid hsla(var(--accent-main), 0.15);
   border-radius: 0.5rem;
   cursor: pointer;
   box-shadow:
-    inset 0 2px 5px hsla(var(--glass-black), 0.3),
-    inset 0 -2px 5px hsla(var(--glass-black), 0.3);
-  transition: all 0.4s ease;
+    inset 2px 2px 5px hsla(var(--glass-black), 0.3),
+    inset -2px -2px 5px hsla(var(--glass-black), 0.3);
+  transition: all 0.3s ease-out;
 }
 
-.cloudtoggle-slider::after {
-  content: "";
+.cloudtoggle-groove:hover {
+  border: 1px solid hsla(var(--accent-main), 0.5);
+  box-shadow:
+    inset 2px 2px 5px hsla(var(--glass-black), 0.3),
+    inset -2px -2px 5px hsla(var(--glass-black), 0.3),
+    0 0 7px hsla(var(--accent-main), 0.3),
+    0 0 15px hsla(var(--accent-main), 0.15);
+  transition: all 0.3s ease-out;
+}
+
+.cloudtoggle-slider-outline {
   position: absolute;
-  top: 0.17rem;
-  left: 0.2rem;
-  height: 1.6rem;
-  width: 1.6rem;
-  background-color: hsla(var(--glass-white), 0.4);
-  border-radius: 0.4rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.cloudtoggle-slider:hover {
-  border-color: hsla(var(--accent-main), 0.4);
-  box-shadow:
-    0 4px 20px hsla(var(--accent-main), 0.35),
-    0 0 0 1px hsla(var(--accent-main), 0.2);
-}
-
-.cloudtoggle-slider:active {
-  transform: transformY(0) scale(0.97);
-  box-shadow:
-    0 2px 12px hsla(var(--glass-black), 0.3),
-    inset 0 1px 0 hsla(var(--glass-white), 0.05);
-  transition: all 0.1s ease;
-}
-
-.cloudtoggle-slider:active::after {
+  height: 2rem;
   width: 2rem;
-}
-
-#cloudtoggle-box:checked + .cloudtoggle-slider {
+  border-radius: 0.5rem;
   background: linear-gradient(
     135deg,
     hsl(var(--accent-dark)),
     hsl(var(--accent-main))
   );
-  border-color: hsla(var(--accent-main), 0.5);
-  box-shadow:
-    0 4px 20px hsla(var(--accent-main), 0.35),
-    0 0 0 1px hsla(var(--accent-main), 0.2);
+  opacity: 0;
+  transition:
+    opacity 0.2s ease-out,
+    width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-#cloudtoggle-box:checked + .cloudtoggle-slider::after {
-  transform: translateX(1.9rem);
+main:has(#cloudtoggle-box:checked) .cloudtoggle-slider-outline {
+  width: 4rem;
+  opacity: 1;
+  transition:
+    opacity 0.1s ease-in,
+    width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-#cloudtoggle-box:checked + .cloudtoggle-slider:hover {
-  background: linear-gradient(
-    135deg,
-    hsl(var(--accent-main)),
-    hsl(var(--accent-light))
-  );
+.cloudtoggle-slider {
+  position: absolute;
+  left: 0.2rem;
+  height: 1.6rem;
+  width: 1.6rem;
+  background-color: hsla(var(--glass-white), 0.4);
+  border-radius: 0.3rem;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-#cloudtoggle-box:checked + .cloudtoggle-slider:active::after {
-  transform: translateX(1.4rem);
+main:has(#cloudtoggle-box:checked) .cloudtoggle-slider {
+  transform: translateX(1.95rem);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* ==========================================================================
@@ -540,17 +550,58 @@ main:has(#selectfolder-box:checked) .selectfolder-options {
     hsl(var(--accent-dark)),
     hsl(var(--accent-main))
   );
-  color: hsla(var(--glass-white));
-  border-radius: 14px;
+  color: hsla(var(--glass-white), 1);
+  border-radius: 1rem;
   border: none;
-  font-size: 0.9rem;
+  font-size: 1rem;
   cursor: pointer;
   box-shadow:
     0 4px 20px hsla(var(--accent-main), 0.35),
     0 0 0 1px hsla(var(--accent-main), 0.2);
-  transition: all 0.35s ease;
-  position: relative;
+  transition: all 0.2s ease;
   overflow: hidden;
+}
+
+.sync-button.fade {
+  color: hsla(var(--glass-white), 0);
+  transition: color 0.2s ease;
+}
+
+.sync-button.syncing {
+  gap: 1.2rem;
+}
+
+.sync-button.syncing span {
+  font-size: 1.2rem;
+  color: inherit;
+}
+
+.sync-button.syncing > *:nth-child(1) {
+  animation: blinking 1s infinite;
+}
+.sync-button.syncing > *:nth-child(2) {
+  animation: blinking 1s infinite 0.25s;
+}
+.sync-button.syncing > *:nth-child(3) {
+  animation: blinking 1s infinite 0.5s;
+}
+
+@keyframes blinking {
+  0% {
+    opacity: 1;
+  }
+  25% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0;
+  }
+  75% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .sync-button:not(:disabled) {
@@ -617,10 +668,10 @@ main:has(#selectfolder-box:checked) .selectfolder-options {
 }
 
 .sync-status.done {
-  color: hsl(var(--status-success));
+  color: hsla(var(--status-success), 0.7);
 }
 .sync-status.error {
-  color: hsl(var(--status-error));
+  color: hsla(var(--status-error), 0.7);
 }
 
 /* ==========================================================================
@@ -680,15 +731,16 @@ main:has(#selectfolder-box:checked) .selectfolder-options {
   transform: rotate(45deg) translateY(-0.7rem);
 }
 
-.disabled-state,
-.card-button:disabled,
-.sync-button:disabled,
-#selectfolder-box:disabled + .selectfolder-picker {
+#card-c.disabled,
+main:has(#card-c.disabled) .cloudtoggle-groove,
+main:has(#selectfolder-box:disabled) .selectfolder-menu,
+main.syncing .card-button,
+main.syncing .cloudtoggle-groove,
+main.syncing .sync-button {
   pointer-events: none !important;
-  opacity: 0.8 !important;
   cursor: not-allowed !important;
   box-shadow:
     inset 10px 10px 10px hsla(var(--glass-black), 0.1),
     inset -10px -10px 10px hsla(var(--glass-white), 0.01);
-  filter: grayscale(0.3);
+  filter: grayscale(0.2) brightness(0.8);
 }
