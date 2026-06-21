@@ -89,12 +89,12 @@ class Engine:
         return parent_id
 
 
-    def lock_target_folder(self, folder_id):
+    def select_folder(self, folder_id):
         self.target_id = folder_id
         return self.target_id
     
 
-    def scan_target_directory(self, folder_id, current_path=""):
+    def scan_selected_folder(self, folder_id, current_path=""):
         query = f"'{folder_id}' in parents and trashed = false"
         
         page_token = None 
@@ -148,30 +148,3 @@ class Engine:
                 status, done = downloader.next_chunk()
                 
         return local_file_path
-    
-
-    def create_test_tree(self):
-        """Creates a temporary folder hierarchy in the root directory for testing."""
-        # Create base test folder
-        base_folder_id = self.create_folder("Test_Tree_Base")
-        
-        # Create a file in the base folder
-        file1_metadata = {"name": "test_file_root.txt", "parents": [base_folder_id]}
-        media1 = MediaIoBaseUpload(io.BytesIO(b"Root level test content"), mimetype='text/plain')
-        self.service.files().create(body=file1_metadata, media_body=media1, fields="id").execute()
-        
-        # Create a subfolder inside the base folder
-        subfolder_metadata = {
-            "name": "Test_Subfolder",
-            "parents": [base_folder_id],
-            "mimeType": "application/vnd.google-apps.folder"
-        }
-        subfolder = self.service.files().create(body=subfolder_metadata, fields="id").execute()
-        subfolder_id = subfolder.get("id")
-        
-        # Create a file in the subfolder
-        file2_metadata = {"name": "test_file_sub.txt", "parents": [subfolder_id]}
-        media2 = MediaIoBaseUpload(io.BytesIO(b"Subfolder test content"), mimetype='text/plain')
-        self.service.files().create(body=file2_metadata, media_body=media2, fields="id").execute()
-        
-        return base_folder_id

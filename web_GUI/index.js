@@ -18,16 +18,13 @@ let progressBarLines = document.querySelector(".progressbar-lines");
 
 const sensitivity = 0.15;
 
-function selectLocations(location) {
-  let apiCall =
-    location === "a" ? pywebview.api.select_A() : pywebview.api.select_B();
-
-  apiCall.then(function (pathData) {
-    if (pathData) {
-      document.querySelector(`#name-${location}`).textContent = pathData[1];
-      document.querySelector(`#path-${location}`).textContent = pathData[0];
-      if (location === "a") pathA = pathData[2];
-      if (location === "b") pathB = pathData[2];
+function selectLocations(loc) {
+  pywebview.api.locations(loc).then(function (locData) {
+    if (locData) {
+      document.querySelector(`#name-${loc}`).textContent = locData[1];
+      document.querySelector(`#path-${loc}`).textContent = locData[0];
+      if (loc === "a") pathA = locData[2];
+      if (loc === "b") pathB = locData[2];
       syncReady();
     }
   });
@@ -39,8 +36,8 @@ function authenticateDrive(checkbox) {
     cardC.classList.add("disabled");
 
     pywebview.api
-      .authenticate_ready()
-      .then(function (result) {
+      .authenticate()
+      .then(function () {
         checkbox.disabled = false;
         cardC.classList.remove("disabled");
         cloudToggleName.style.color = "hsla(142, 71%, 58%, 0.7)";
@@ -59,8 +56,8 @@ function authenticateDrive(checkbox) {
 function createFolder() {
   let newfolderBoxValue = document.querySelector(".newfolder-box").value.trim();
   if (newfolderBoxValue !== "") {
-    pywebview.api.create_folder(newfolderBoxValue).then(function (folderId) {
-      if (folderId) {
+    pywebview.api.create_folder(newfolderBoxValue).then(function (id) {
+      if (id) {
         document.querySelector(".newfolder-box").value = "";
         document.querySelector("#selectfolder-box").checked = false;
       }
@@ -117,7 +114,7 @@ async function getFolder(checkbox) {
 }
 
 function selectFolder(name, id) {
-  pywebview.api.lock_target_folder(id).then(function () {
+  pywebview.api.select_folder(id).then(function () {
     selectFolderName.textContent = name;
     document.querySelector("#selectfolder-box").checked = false;
     pathC = id;

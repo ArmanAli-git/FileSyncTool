@@ -10,7 +10,6 @@ drive = Cloud.Engine()
 
 #  <------  FUNCTIONS  ------>
 class PythonApi:
-    
     #   <------  LOCAL  ------>
     def __init__(self):
         self.path_A = "Path not found"
@@ -22,132 +21,92 @@ class PythonApi:
         self.cloud_cache = []
 
 
-    def truncate_path(self, path):
-        tpath = list(path.parts)
+    def truncate(self, path):
+        part = list(path.parts)
 
-        for i in range(1, len(tpath)):
-            lenght = len("\\".join(tpath[i::]))
-            if lenght < 25:
-                if i > 2:
-                    return fr"{tpath[0]}...\{"\\".join(tpath[i::])}"
-                else:
-                    return str(path)
+        for i in range(1, len(part)):
+            truncated = "\\".join(part[i::])
+            if len(truncated) < 25:
+                return fr"{part[0]}...\{truncated}" if i > 1 else str(path)
+        return str(path)
     
     
-    def select_A(self):
-        pick = self._window.create_file_dialog(webview.FileDialog.FOLDER)
-        if pick:
-            self.path_A = Path(pick[0])
-        else:
-            return None
-        return self.truncate_path(self.path_A), self.path_A.name, str(self.path_A)
+    def locations(self, loc):
+        p = self._window.create_file_dialog(webview.FileDialog.FOLDER)
+        if not p: return None
 
-
-    def select_B(self):
-        pick = self._window.create_file_dialog(webview.FileDialog.FOLDER)
-        if pick:
-            self.path_B = Path(pick[0])
-        else:
-            return None
-        return self.truncate_path(self.path_B), self.path_B.name, str(self.path_B)
-
+        path = Path(p[0])
+        setattr(self, f"path_{loc.upper()}", path)
+        return self.truncate(path), path.name, str(path)
+        
 
     def compare_l2l(self):
-        items_A = {item for item in self.path_A.rglob("*")}
-        items_B = {item for item in self.path_B.rglob("*")}
+        rel_A = {i.relative_to(self.path_A) for i in self.path_A.rglob("*")}
+        rel_B = {i.relative_to(self.path_B) for i in self.path_B.rglob("*")}
 
-        rel_items_A = {item.relative_to(self.path_A) for item in items_A}
-        rel_items_B = {item.relative_to(self.path_B) for item in items_B}
-
-        missing_in_A = rel_items_B - rel_items_A
-        missing_in_B = rel_items_A - rel_items_B
-        inter_AB = rel_items_A & rel_items_B
-
-        return missing_in_A, missing_in_B, inter_AB
+        return rel_B - rel_A, rel_A - rel_B, rel_A & rel_B
 
 
     def compare_l2c(self):
-        items_A = {item for item in self.path_A.rglob("*")}
+        rel_A = {str(i.relative_to(self.path_A)).replace("\\", "/") for i in self.path_A.rglob("*")}
+        rel_C = {i["path"] for i in self.cloud_cache}
 
-        rel_items_A = {str(item.relative_to(self.path_A)).replace("\\", "/") for item in items_A}
-        rel_items_C = {item["path"] for item in self.cloud_cache}
+        miss_A = [i for i in self.cloud_cache if i["path"] in (rel_C - rel_A)]
+        inter_C = [i for i in self.cloud_cache if i["path"] in (rel_A & rel_C)]
 
-        missing_in_A = rel_items_C - rel_items_A
-        missing_in_C = rel_items_A - rel_items_C
-        inter_local = rel_items_A & rel_items_C
-
-        missing_in_A = [item for item in self.cloud_cache if item["path"] in missing_in_A]
-        inter_cloud = [item for item in self.cloud_cache if item["path"] in inter_local]
-
-        return missing_in_A, missing_in_C, (inter_local, inter_cloud)
+        return miss_A, rel_A - rel_C, (rel_A & rel_C, inter_C)
 
 
-    def sync(self, cloud, cloud_folder):
-        if cloud == True:
-            self.cache(cloud_folder)
-            
-            missing_in_A, missing_in_C, inter_AC = self.compare_l2c()
+    def sync(self, is_cloud, C_folder):
+        if is_cloud:
+            self.cache(C_folder)
+            miss_A, miss_C, inter_AC = self.compare_l2c()
+            self.total_work = len(miss_A) + len(miss_C) + len(inter_AC)
 
-            self.total_work = len(missing_in_A) + len(missing_in_C) + len(inter_AC)
+        else:
+            miss_A, miss_B, inter_AB = self.compare_l2l()
+            self.total_work = len(miss_A) + len(miss_B) + len(inter_AB)
 
-            self._window.evaluate_js("progressBar('show')")
+        self._window.evaluate_js("progressBar('show')")
 
-            self.downloader(self.path_A, missing_in_A)
-            self.uploader(self.path_A, self.path_C, missing_in_C)
+        if is_cloud:
+            self.downloader(self.path_A, miss_A)
+            self.uploader(self.path_A, self.path_C, miss_C)
             self.updater(inter_AC)
-
-            self.work_done = 1
-            self._window.evaluate_js("progressBar('hide')")
-
-
-        elif cloud == False:
-            missing_in_A, missing_in_B, inter_AB = self.compare_l2l()
-
-            self.total_work = len(missing_in_A) + len(missing_in_B) + len(inter_AB)
-
-            self._window.evaluate_js("progressBar('show')")
-
-            self.copy(self.path_B, self.path_A, missing_in_A)
-            self.copy(self.path_A, self.path_B, missing_in_B)
+        else:
+            self.copy(self.path_B, self.path_A, miss_A)
+            self.copy(self.path_A, self.path_B, miss_B)
             self.update(inter_AB)
 
-            self.work_done = 1
-            self._window.evaluate_js("progressBar('hide')")
+        self.work_done = 1
+        self._window.evaluate_js("progressBar('hide')")
 
 
-    def copy(self, src_path, dst_path, items):
-        if len(items) == 0:
-            return
-
-        for item in items:
+    def copy(self, src, dst, items):
+        for i in items:
             self.update_bar()
 
-            src_item = src_path / item
-            dst_item = dst_path / item
+            s, d = src / i, dst / i
 
-            if src_item.is_file():
-                dst_item.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copy2(src_item, dst_item)
-            elif src_item.is_dir():
-                dst_item.mkdir(parents=True, exist_ok=True)
+            if s.is_file():
+                d.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(s, d)
+            elif s.is_dir():
+                d.mkdir(parents=True, exist_ok=True)
 
 
     def update(self, inter_AB):
-        if len(inter_AB) == 0:
-            return
+        for i in inter_AB:
+            a, b = self.path_A / i, self.path_B / i
 
-        for item in inter_AB:
-            item_A = self.path_A / item
-            item_B = self.path_B / item
-
-            if item_A.is_file() and item_B.is_file():
-                if item_A.stat().st_mtime > item_B.stat().st_mtime:
-                    self.copy(self.path_A, self.path_B, [item])
-                elif item_B.stat().st_mtime > item_A.stat().st_mtime:
-                    self.copy(self.path_B, self.path_A, [item])
+            if a.is_file() and b.is_file():
+                if a.stat().st_mtime > b.stat().st_mtime:
+                    self.copy(self.path_A, self.path_B, [i])
+                elif b.stat().st_mtime > a.stat().st_mtime:
+                    self.copy(self.path_B, self.path_A, [i])
                 else:
                     self.update_bar()
-            elif item_A.is_dir() and item_B.is_dir():
+            elif a.is_dir() and b.is_dir():
                 self.update_bar()
 
 
@@ -157,82 +116,71 @@ class PythonApi:
         
         
     #   <------  CLOUD  ------>
-    def authenticate_ready(self):
+    def authenticate(self):
         drive.authenticate()
         self.root_id = drive.get_or_create_root()
 
 
-    def create_folder(self, folder_name):
-        return drive.create_folder(folder_name)
-        
-        
+    def create_folder(self, name):
+        return drive.create_folder(name)
+
+
     def scan_root(self):
         return drive.scan_root()   
+        
+
+    def select_folder(self, id):
+        drive.select_folder(id) 
+        self.path_C = id
 
 
-    def lock_target_folder(self, folder_id):
-        drive.lock_target_folder(folder_id) 
-        self.path_C = folder_id
+    def scan_selected_folder(self, C_folder):
+        drive.scan_selected_folder(C_folder)
 
 
-    def scan_target_dir(self, cloud_folder):
-        drive.scan_target_directory(cloud_folder)
+    def cache(self, target):
+        self.cloud_cache = [
+            {"id": i["id"], "name":i["name"], "path":i["path"], "is_dir":i["is_dir"], "modified":i["modified"]}
+            for i in drive.scan_selected_folder(target)
+        ]
 
 
-    def cache(self, target_folder):
-        for item in drive.scan_target_directory(target_folder):
-            item_meta = {"id": item["id"], "name":item["name"], "path":item["path"], "is_dir":item["is_dir"], "modified":item["modified"]}
-            self.cloud_cache.append(item_meta)
-
-
-    def downloader(self, local_path, items_info):
-        if len(items_info) == 0:
-            return
-
-        for item in items_info:
+    def downloader(self, local, cloud):
+        for i in cloud:
             self.update_bar()
 
-            local_item = local_path / item["path"]
+            local_i = local / i["path"]
 
-            if not item["is_dir"]:
-                local_item.parent.mkdir(parents=True, exist_ok=True)
-                drive.download(item["id"], local_item)
+            if not i["is_dir"]:
+                local_i.parent.mkdir(parents=True, exist_ok=True)
+                drive.download(i["id"], local_i)
             else:
-                local_item.mkdir(parents=True, exist_ok=True)
+                local_i.mkdir(parents=True, exist_ok=True)
 
 
-    def uploader(self, local_path, cloud_path, items):
-        if len(items) == 0:
-            return
-
-        for item in items:
+    def uploader(self, local, cloud, items):
+        for i in items:
             self.update_bar()
 
-            local_item = local_path / item
+            local_i = local / i
 
-            if local_item.is_file():
-                parent_id = drive.get_or_create_path(str(Path(item).parent), cloud_path)
-                drive.upload(local_item, parent_id)
-            elif local_item.is_dir():
-                drive.get_or_create_path(item, cloud_path)
+            if local_i.is_file():
+                parent_id = drive.get_or_create_path(str(Path(i).parent), cloud)
+                drive.upload(local_i, parent_id)
+            elif local_i.is_dir():
+                drive.get_or_create_path(i, cloud)
 
 
     def updater(self, inter_AC):
-        inter_local, inter_cloud = inter_AC
+        inter_A, inter_C = inter_AC
+        cloud_lookup = {c["path"]: c for c in inter_C}
 
-        if len(inter_local) == 0:
-            return
-
-        cloud_lookup = {c["path"]: c for c in inter_cloud}
-
-        for item in inter_local:
+        for item in inter_A:
             full_A = self.path_A / item
             full_C = cloud_lookup[item]
 
             local_mtime = full_A.stat().st_mtime
-
-            full_C_mtime_str = full_C["modified"].replace("Z", "+00:00")
-            cloud_mtime = datetime.fromisoformat(full_C_mtime_str).timestamp()
+            cloud_mtime = datetime.fromisoformat(full_C["modified"].replace("Z", "+00:00")).timestamp()
 
             if full_A.is_file() and not full_C["is_dir"]:
                 if local_mtime > cloud_mtime:
