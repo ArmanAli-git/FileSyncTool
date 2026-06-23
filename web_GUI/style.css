@@ -122,6 +122,7 @@ main {
   padding: 1.5rem;
   cursor: pointer;
   user-select: none;
+  position: relative;
 }
 
 .card-button:hover {
@@ -140,6 +141,56 @@ main {
   transform: translateY(0) scale(0.97);
   box-shadow: 0 4px 16px hsla(var(--glass-black), 0.3);
   transition: all 0.1s ease-out;
+}
+
+#card-a.drop-effect,
+#card-b.drop-effect,
+#card-c.drop-effect {
+  background: hsla(var(--status-error), 0.09);
+  border: 1px solid hsla(var(--status-error), 0.1);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.27);
+}
+
+main:has(#card-a.drop-effect) #name-a,
+main:has(#card-a.drop-effect) #path-a,
+main:has(#card-b.drop-effect) #name-b,
+main:has(#card-b.drop-effect) #path-b,
+main:has(#card-c.drop-effect) .selectfolder-menu {
+  opacity: 0;
+  transition: opacity 0.15s ease-in;
+}
+
+.drop-path {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: hsla(var(--accent-dark), 0.5);
+  background: hsla(var(--accent-light), 0.05);
+  opacity: 0;
+  border: 1px solid transparent;
+  border-radius: 0.8rem;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.27);
+  padding: 0.1rem;
+  cursor: pointer;
+}
+
+.drop-path.show {
+  opacity: 1;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.27);
+}
+
+.drop-path.show:hover {
+  color: hsla(var(--status-error), 0.5);
+  background-color: hsla(var(--status-error), 0.05);
+  border: 1px solid hsla(var(--status-error), 0);
+  transition: all 0.3s ease-out;
 }
 
 .card-icon {

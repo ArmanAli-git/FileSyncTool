@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>File Sync Tool</title>
-    <link href="./index.css" rel="stylesheet" />
+    <link href="./style.css" rel="stylesheet" />
   </head>
 
   <body>
@@ -15,6 +15,17 @@
 
       <div class="card-container">
         <div class="card-button" id="card-a" onclick="selectLocations('a')">
+          <button
+            type="button"
+            class="drop-path"
+            id="drop-path-a"
+            onclick="
+              event.stopPropagation();
+              dropLocations('a');
+            "
+          >
+            ⨉
+          </button>
           <span class="card-icon">📁</span>
           <span class="card-name" id="name-a">Location A</span>
           <span class="card-path" id="path-a">Click to browse</span>
@@ -22,11 +33,33 @@
 
         <div class="secondary-card-wrapper">
           <div class="card-button" id="card-b" onclick="selectLocations('b')">
+            <button
+              type="button"
+              class="drop-path"
+              id="drop-path-b"
+              onclick="
+                event.stopPropagation();
+                dropLocations('b');
+              "
+            >
+              ⨉
+            </button>
             <span class="card-icon">📁</span>
             <span class="card-name" id="name-b">Location B</span>
             <span class="card-path" id="path-b">Click to browse</span>
           </div>
           <div class="card-button" id="card-c">
+            <button
+              type="button"
+              class="drop-path"
+              id="drop-path-c"
+              onclick="
+                event.stopPropagation();
+                dropLocations('c');
+              "
+            >
+              ⨉
+            </button>
             <span class="card-icon">☁️</span>
             <span class="card-name">Drive</span>
             <div class="newfolder-container">
@@ -100,6 +133,6 @@
       </div>
     </main>
 
-    <script src="./index.js"></script>
+    <script src="./script.js"></script>
   </body>
 </html>

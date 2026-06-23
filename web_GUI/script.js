@@ -18,15 +18,56 @@ let progressBarLines = document.querySelector(".progressbar-lines");
 
 const sensitivity = 0.15;
 
-function selectLocations(loc) {
-  pywebview.api.locations(loc).then(function (locData) {
+function selectLocations(location) {
+  pywebview.api.get_locations(location).then(function (locData) {
     if (locData) {
-      document.querySelector(`#name-${loc}`).textContent = locData[1];
-      document.querySelector(`#path-${loc}`).textContent = locData[0];
-      if (loc === "a") pathA = locData[2];
-      if (loc === "b") pathB = locData[2];
+      document.querySelector(`#name-${location}`).textContent = locData[1];
+      document.querySelector(`#path-${location}`).textContent = locData[0];
+      if (location === "a") {
+        pathA = locData[2];
+        document.querySelector("#drop-path-a").classList.add("show");
+      }
+      if (location === "b") {
+        pathB = locData[2];
+        document.querySelector("#drop-path-b").classList.add("show");
+      }
       syncReady();
     }
+  });
+}
+
+function dropEffectAnimation(location, callback) {
+  let card = document.querySelector(`#card-${location}`);
+  card.classList.add("drop-effect");
+  setTimeout(() => {
+    callback();
+    card.classList.remove("drop-effect");
+  }, 300);
+}
+
+function dropLocations(location) {
+  pywebview.api.drop_locations(location).then(function () {
+    dropEffectAnimation(location, () => {
+      if (location !== "c") {
+        document.querySelector(`#name-${location}`).textContent =
+          `Location ${location.toUpperCase()}`;
+        document.querySelector(`#path-${location}`).textContent =
+          "Click to browse";
+      }
+
+      if (location === "a") {
+        pathA = null;
+        document.querySelector("#drop-path-a").classList.remove("show");
+      } else if (location === "b") {
+        pathB = null;
+        document.querySelector("#drop-path-b").classList.remove("show");
+      } else if (location === "c") {
+        pathC = null;
+        selectFolderName.textContent = "Choose a folder";
+        document.querySelector("#drop-path-c").classList.remove("show");
+      }
+      syncReady();
+    });
   });
 }
 
@@ -83,6 +124,8 @@ function loadingFolderAnimation(folder, rate) {
 async function getFolder(checkbox) {
   if (checkbox.checked) {
     selectFolderBox.disabled = true;
+    selectFolderOptions.innerHTML = "";
+    emptyFolder.classList.remove("show");
     loadingFolder.classList.add("show");
 
     let folders = await pywebview.api.scan_root();
@@ -107,9 +150,6 @@ async function getFolder(checkbox) {
     if (selectFolderOptions.childElementCount === 0) {
       emptyFolder.classList.add("show");
     }
-  } else {
-    selectFolderOptions.innerHTML = "";
-    emptyFolder.classList.remove("show");
   }
 }
 
@@ -118,6 +158,7 @@ function selectFolder(name, id) {
     selectFolderName.textContent = name;
     document.querySelector("#selectfolder-box").checked = false;
     pathC = id;
+    document.querySelector("#drop-path-c").classList.add("show");
     syncReady();
   });
 }
@@ -178,8 +219,12 @@ function syncReady() {
   if ((pathA && pathB) || (pathA && pathC)) {
     syncSts.textContent = "Ready to sync.";
     syncBtn.disabled = false;
-  } else if (pathA || pathB || pathC) {
+  } else if ([pathA, pathB, pathC].filter(Boolean).length === 1) {
     syncSts.textContent = "Waiting for second location ...";
+    syncBtn.disabled = true;
+  } else {
+    syncBtn.disabled = true;
+    syncSts.textContent = "Please select locations to begin.";
   }
 }
 
@@ -187,7 +232,7 @@ function sync() {
   syncState("syncing");
   let cloudToggleCheck = document.querySelector("#cloudtoggle-box").checked;
   pywebview.api
-    .sync(cloudToggleCheck, pathC)
+    .synchronize_files(cloudToggleCheck)
     .then(function () {
       syncState("success");
     })
