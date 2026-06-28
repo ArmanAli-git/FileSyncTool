@@ -163,7 +163,7 @@ function selectFolder(name, id) {
   });
 }
 
-function syncState(state) {
+function syncState(state, message = null) {
   if (state === "syncing") {
     main.classList.add("syncing");
     syncBtn.classList.add("fade");
@@ -174,6 +174,8 @@ function syncState(state) {
       syncBtn.classList.remove("fade");
     }, 200);
 
+    syncSts.classList.remove("done");
+    syncSts.classList.remove("error");
     syncSts.textContent = "Sync in progress, please wait ...";
   } else if (state === "success") {
     main.classList.remove("syncing");
@@ -206,16 +208,14 @@ function syncState(state) {
     }, 200);
 
     syncSts.classList.add("error");
-    syncSts.textContent = "Sync failed. Please check your connection.";
-  }
-
-  if (state === "syncing") {
-    syncSts.classList.remove("done");
-    syncSts.classList.remove("error");
+    syncSts.textContent =
+      message || "Sync failed. Please check your connection.";
   }
 }
 
 function syncReady() {
+  syncSts.classList.remove("done");
+  syncSts.classList.remove("error");
   if ((pathA && pathB) || (pathA && pathC)) {
     syncSts.textContent = "Ready to sync.";
     syncBtn.disabled = false;
@@ -233,11 +233,22 @@ function sync() {
   let cloudToggleCheck = document.querySelector("#cloudtoggle-box").checked;
   pywebview.api
     .synchronize_files(cloudToggleCheck)
-    .then(function () {
-      syncState("success");
+    .then(function (result) {
+      if (result && result.ok === false) {
+        let msg = result.error || "Unknown error";
+        if (result.detail) msg += ": " + result.detail;
+        syncState(
+          "fail",
+          result.error || "An unknown error occurred. Please try again.",
+        );
+        console.error("[Sync Error]", result);
+      } else {
+        syncState("success");
+      }
     })
     .catch(function (error) {
-      syncState("fail");
+      syncState("fail", "Unexpected error: " + (error.message || error));
+      console.error("[Sync Exception]", error);
     });
 }
 
@@ -264,3 +275,16 @@ selectFolderList.addEventListener(
   },
   { passive: false },
 );
+
+function showExitConfirm() {
+  document.getElementById("exit-modal").classList.add("show");
+}
+
+function cancelExit() {
+  document.getElementById("exit-modal").classList.remove("show");
+}
+
+function confirmExit() {
+  document.getElementById("exit-modal").classList.remove("show");
+  pywebview.api.force_quit();
+}

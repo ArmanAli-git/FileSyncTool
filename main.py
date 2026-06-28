@@ -1,9 +1,24 @@
+import sys
+import os
 import shutil
+import threading
+import ssl
 from datetime import datetime
 from pathlib import Path
-from typing import Any
-
 import webview
+
+
+def resource_path(relative):
+    """Return path to a bundled resource (inside _MEIPASS when frozen)."""
+    base = getattr(sys, "_MEIPASS", Path(__file__).parent)
+    return str(Path(base) / relative)
+
+
+def exe_dir():
+    """Return the directory containing the EXE (or the script dir when not frozen)."""
+    if getattr(sys, "frozen", False):
+        return Path(sys.executable).parent
+    return Path(__file__).parent
 
 import Cloud
 
@@ -22,6 +37,11 @@ class PythonApi:
         self.total_work = 0
         self.work_done = 1
         self.cloud_cache = []
+        self.is_syncing = False
+
+    def force_quit(self):
+        self.is_syncing = False
+        self._window.destroy()
 
     def truncate_path(self, path):
         part = list(path.parts)
@@ -74,28 +94,58 @@ class PythonApi:
         return miss_A, rel_A - rel_C, (rel_A & rel_C, inter_C)
 
     def synchronize_files(self, is_cloud):
-        if is_cloud:
-            self.cache_C(self.path_C)
-            miss_A, miss_C, inter_AC = self.compare_l2c()
-            self.total_work = len(miss_A) + len(miss_C) + len(inter_AC)
+        self.is_syncing = True
+        try:
+            if is_cloud:
+                if not self.path_A or not self.path_A.exists():
+                    raise FileNotFoundError(self.path_A)
+                self.cache_C(self.path_C)
+                miss_A, miss_C, inter_AC = self.compare_l2c()
+                self.total_work = len(miss_A) + len(miss_C) + len(inter_AC)
+            else:
+                if not self.path_A or not self.path_A.exists():
+                    raise FileNotFoundError(self.path_A)
+                if not self.path_B or not self.path_B.exists():
+                    raise FileNotFoundError(self.path_B)
+                miss_A, miss_B, inter_AB = self.compare_l2l()
+                self.total_work = len(miss_A) + len(miss_B) + len(inter_AB)
 
-        else:
-            miss_A, miss_B, inter_AB = self.compare_l2l()
-            self.total_work = len(miss_A) + len(miss_B) + len(inter_AB)
+            self._window.evaluate_js("progressBar('show')")
 
-        self._window.evaluate_js("progressBar('show')")
+            if is_cloud:
+                self.download_files(self.path_A, miss_A)
+                self.upload_files(self.path_A, self.path_C, miss_C)
+                self.update_files(inter_AC)
+            else:
+                self.copy_files(self.path_B, self.path_A, miss_A)
+                self.copy_files(self.path_A, self.path_B, miss_B)
+                self.copy_latest(inter_AB)
 
-        if is_cloud:
-            self.download_files(self.path_A, miss_A)
-            self.upload_files(self.path_A, self.path_C, miss_C)
-            self.update_files(inter_AC)
-        else:
-            self.copy_files(self.path_B, self.path_A, miss_A)
-            self.copy_files(self.path_A, self.path_B, miss_B)
-            self.copy_latest(inter_AB)
+            self.work_done = 1
+            self._window.evaluate_js("progressBar('hide')")
+            return {"ok": True}
 
-        self.work_done = 1
-        self._window.evaluate_js("progressBar('hide')")
+        except PermissionError:
+            self._window.evaluate_js("progressBar('hide')")
+            return {"ok": False, "error": "Permission denied. A file or folder could not be accessed."}
+
+        except FileNotFoundError:
+            self._window.evaluate_js("progressBar('hide')")
+            return {"ok": False, "error": "A selected folder no longer exists. Please re-select it."}
+
+        except (ssl.SSLError, ConnectionError, TimeoutError, OSError) as e:
+            if isinstance(e, (ssl.SSLError, ConnectionError, TimeoutError)):
+                self._window.evaluate_js("progressBar('hide')")
+                return {"ok": False, "error": "Network error. Please check your internet connection."}
+            self._window.evaluate_js("progressBar('hide')")
+            return {"ok": False, "error": "A system error occurred. Please check your disk or storage."}
+
+        except Exception:
+            self._window.evaluate_js("progressBar('hide')")
+            return {"ok": False, "error": "An unknown error occurred. Please try again."}
+        
+        finally:
+            self.is_syncing = False
 
     def copy_files(self, src, dst, items):
         for item in items:
@@ -212,11 +262,19 @@ class PythonApi:
 API = PythonApi()
 WINDOW = webview.create_window(
     "File Sync Tool",
-    "web_GUI/index.html",
+    resource_path("web_GUI/index.html"),
     js_api=API,
     width=800,
     height=600,
     resizable=False,
 )
+def on_closing():
+    if API.is_syncing:
+        threading.Thread(
+            target=lambda: WINDOW.evaluate_js("showExitConfirm()"),
+            daemon=True
+        ).start()
+        return False
+WINDOW.events.closing += on_closing
 API._window = WINDOW
 webview.start(debug=False)

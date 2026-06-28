@@ -133,6 +133,17 @@
       </div>
     </main>
 
+    <div id="exit-modal" class="modal-overlay">
+      <div class="modal-box">
+        <p>Sync is in progress. Closing now may leave files incomplete.</p>
+        <div class="modal-buttons">
+          <button onclick="confirmExit()" id="exitbutton-confirm">
+            Exit anyway
+          </button>
+          <button onclick="cancelExit()" id="exitbutton-cancel">Cancel</button>
+        </div>
+      </div>
+    </div>
     <script src="./script.js"></script>
   </body>
 </html>
