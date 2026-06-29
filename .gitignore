@@ -1,0 +1,10 @@
+credentials.json
+token.json
+.dist/
+build/
+*.exe
+__pycache__/
+*.pyc
+.vscode/
+App/
+testing/

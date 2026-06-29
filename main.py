@@ -1,24 +1,9 @@
-import sys
-import os
 import shutil
 import threading
 import ssl
 from datetime import datetime
 from pathlib import Path
 import webview
-
-
-def resource_path(relative):
-    """Return path to a bundled resource (inside _MEIPASS when frozen)."""
-    base = getattr(sys, "_MEIPASS", Path(__file__).parent)
-    return str(Path(base) / relative)
-
-
-def exe_dir():
-    """Return the directory containing the EXE (or the script dir when not frozen)."""
-    if getattr(sys, "frozen", False):
-        return Path(sys.executable).parent
-    return Path(__file__).parent
 
 import Cloud
 
@@ -262,7 +247,7 @@ class PythonApi:
 API = PythonApi()
 WINDOW = webview.create_window(
     "File Sync Tool",
-    resource_path("web_GUI/index.html"),
+    "web_GUI/index.html",
     js_api=API,
     width=800,
     height=600,
